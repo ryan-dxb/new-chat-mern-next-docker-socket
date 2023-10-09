@@ -13,4 +13,4 @@ export const getSocketServerInstance = () => {
   return io;
 };
 
-console.log(getSocketServerInstance());
+console.log("GETTING SERVER SOCKET", getSocketServerInstance());

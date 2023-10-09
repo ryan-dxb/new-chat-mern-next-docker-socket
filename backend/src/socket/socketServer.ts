@@ -1,5 +1,8 @@
 import { Server } from "socket.io";
-import { setSocketServerInstance } from "./socketServerStore";
+import {
+  getSocketServerInstance,
+  setSocketServerInstance,
+} from "./socketServerStore";
 
 const registerSocketServer = async (server: any) => {
   const io = await new Server(server, {
@@ -13,8 +16,6 @@ const registerSocketServer = async (server: any) => {
   const serverIO = await setSocketServerInstance(io);
 
   io.on("connection", (socket) => {
-    console.log(socket);
-
     console.log("A user connected");
 
     socket.on("test", (data) => {
