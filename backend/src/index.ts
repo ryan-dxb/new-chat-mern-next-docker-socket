@@ -2,7 +2,7 @@ import app from "./app";
 import connectDB from "./config/db/connectDB";
 import logger from "./config/logger.config";
 import { createServer } from "http";
-import registerSocketServer from "./socket/socketServer";
+import registerSocketServer from "./socketServer/socketServer";
 
 const PORT = process.env.PORT || 1997;
 

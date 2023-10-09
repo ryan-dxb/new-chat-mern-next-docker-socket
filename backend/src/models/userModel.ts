@@ -13,8 +13,10 @@ export interface UserInput {
   password: string;
   isEmailVerified: boolean;
   isAccountActive: boolean;
-  roles: Roles[];
   refreshTokens: string[];
+  friends: mongoose.Schema.Types.ObjectId[];
+  pendingFriendInvitations: mongoose.Schema.Types.ObjectId[];
+  pendingFriendSentRequests: mongoose.Schema.Types.ObjectId[];
 
   // Optional fields
   provider?: string;
@@ -22,11 +24,7 @@ export interface UserInput {
   avatar?: { url: string; publicId: string };
   firstName?: string;
   lastName?: string;
-  businessName?: string;
-  address?: string;
-  city?: string;
-  country?: string;
-  postalCode?: string;
+  status?: string;
 }
 
 export interface UserDocument extends UserInput, mongoose.Document {
@@ -44,12 +42,26 @@ const UserSchema = new mongoose.Schema<UserDocument>(
     lastName: { type: String },
     avatar: { type: Object, url: String, publicId: String },
     username: { type: String, required: true, unique: true, trim: true },
-    businessName: { type: String },
-    address: { type: String },
-    city: { type: String },
-    country: { type: String },
-    postalCode: { type: String },
-    roles: [{ type: String, default: [Roles.USER] }],
+    status: { type: String, default: "Hi there!!!" },
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    pendingFriendInvitations: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "FriendInvitation",
+      },
+    ],
+    pendingFriendSentRequests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "FriendInvitation",
+      },
+    ],
+
     isAccountActive: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: false },
     provider: { type: String },
@@ -62,17 +74,6 @@ const UserSchema = new mongoose.Schema<UserDocument>(
     timestamps: true,
   }
 );
-
-// Add Role enum to UserSchema
-UserSchema.pre("save", async function (next) {
-  let user = this as UserDocument;
-
-  if (user.roles.length === 0) {
-    user.roles.push(Roles.USER);
-  }
-
-  next();
-});
 
 // Encrypt password using bcrypt
 UserSchema.pre("save", async function (next) {
