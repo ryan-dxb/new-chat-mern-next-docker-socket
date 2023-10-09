@@ -1,18 +1,19 @@
 import app from "./app";
 import connectDB from "./config/db/connectDB";
 import logger from "./config/logger.config";
-// import connectDB from "./config/db/connectDB";
-
-// import { PORT } from "./utils/variables";
+import { createServer } from "http";
+import registerSocketServer from "./socket/socketServer";
 
 const PORT = process.env.PORT || 1997;
 
 // Connect to MongoDB and then start the express server
-
 connectDB();
 
-let server = app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT}`);
+let server = createServer(app);
+registerSocketServer(server);
+
+server.listen(PORT, () => {
+  logger.info(`Server listening on port ${PORT}`);
 });
 
 // Exit process on unhandled promise rejection
