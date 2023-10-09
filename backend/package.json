@@ -57,6 +57,7 @@
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "puppeteer": "^21.3.8",
+    "socket.io": "^4.7.2",
     "trim-request": "^1.0.6",
     "winston": "^3.10.0",
     "zod": "^3.22.2"
