@@ -5,6 +5,7 @@ import sendError from "@/utils/sendError";
 import createHttpError from "http-errors";
 import { findUserByEmail, findUserById } from "@/services/auth.service";
 import { UserDocument } from "@/models/userModel";
+import FriendInvitationModel from "@/models/friendInvitationModel";
 
 const cancelFriendSentRequestController: RequestHandler = asyncHandler(
   async (req: CancelInviteRequest, res: Response, next: NextFunction) => {
@@ -79,6 +80,9 @@ const cancelFriendSentRequestController: RequestHandler = asyncHandler(
       await receiverFound.save();
       // Save the user
       await userFound.save();
+
+      // Delete the friend request from database
+      await FriendInvitationModel.findByIdAndDelete(request_id);
 
       res.status(200).json({
         message: "Friend request canceled successfully",
