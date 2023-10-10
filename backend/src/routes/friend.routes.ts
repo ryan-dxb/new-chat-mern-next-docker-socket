@@ -1,4 +1,7 @@
-import { friendInvite } from "@/controllers/friendInvitationControllers";
+import {
+  cancelFriendSentRequest,
+  friendInvite,
+} from "@/controllers/friendInvitationControllers";
 import { getOwnProfile } from "@/controllers/userControllers";
 import isAuthenticated from "@/middlewares/isAuthenticated";
 import schemaValidator from "@/middlewares/schemaValidator";
@@ -7,6 +10,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.route("/invite").post(isAuthenticated, friendInvite);
+router.route("/send-invite").post(isAuthenticated, friendInvite);
+router.route("/cancel-invite").post(isAuthenticated, cancelFriendSentRequest);
 
 export default router;

@@ -5,3 +5,10 @@ export interface FriendInviteRequest extends Request {
     receiver_email: string;
   };
 }
+
+export interface CancelInviteRequest extends Request {
+  body: {
+    request_id: string;
+    receiver_email: string;
+  };
+}
