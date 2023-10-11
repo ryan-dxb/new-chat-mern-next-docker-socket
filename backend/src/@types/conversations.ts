@@ -5,3 +5,10 @@ export interface CreateOrFetchConversationRequest extends Request {
     friend_id: string;
   };
 }
+
+export interface CreateGroupConversationRequest extends Request {
+  body: {
+    friend_ids: string[];
+    groupName: string;
+  };
+}
