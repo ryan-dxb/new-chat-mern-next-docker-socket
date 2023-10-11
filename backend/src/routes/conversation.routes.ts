@@ -1,7 +1,9 @@
 import {
+  addUserToGroup,
   createGroupConversation,
   createOrFetchDirectConversation,
   fetchAllConversations,
+  removeUserFromGroup,
 } from "@/controllers/conversationControllers";
 import { getOwnProfile } from "@/controllers/userControllers";
 import isAuthenticated from "@/middlewares/isAuthenticated";
@@ -19,5 +21,10 @@ router
 router
   .route("/create-group-conversation")
   .post(isAuthenticated, createGroupConversation);
+
+router.route("/add-user-to-group").post(isAuthenticated, addUserToGroup);
+router
+  .route("/remove-user-from-group")
+  .post(isAuthenticated, removeUserFromGroup);
 
 export default router;

@@ -12,3 +12,17 @@ export interface CreateGroupConversationRequest extends Request {
     groupName: string;
   };
 }
+
+export interface AddUserToGroupRequest extends Request {
+  body: {
+    friend_id: string;
+    group_id: string;
+  };
+}
+
+export interface RemoveUserFromGroupRequest extends Request {
+  body: {
+    friend_id: string;
+    group_id: string;
+  };
+}
