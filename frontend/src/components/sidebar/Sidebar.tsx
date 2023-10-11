@@ -16,7 +16,7 @@ const Sidebar: NextPage<SidebarProps> = () => {
     switch (openedTab) {
       case "Chats":
         return <Chats />;
-      case "Groups":
+      case "Requests":
         return <Groups />;
       case "Contacts":
         return <Contacts />;
@@ -27,7 +27,7 @@ const Sidebar: NextPage<SidebarProps> = () => {
   };
 
   return (
-    <div className="min-w-[320px] max-w-[320px] bg-primary-foreground ">
+    <div className="min-w-[320px] max-w-[320px] border-r border-gray-50 shadow-md flex flex-col">
       {renderSidebarContent()}
     </div>
   );

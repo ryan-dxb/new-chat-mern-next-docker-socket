@@ -4,15 +4,16 @@ import { NextPage } from "next";
 
 interface SidebarHeaderProps {
   header: string;
+  icon?: React.ReactNode;
 }
 
-const SidebarHeader: NextPage<SidebarHeaderProps> = ({ header }) => {
+const SidebarHeader: NextPage<SidebarHeaderProps> = ({ header, icon }) => {
   return (
-    <div className="flex items-center justify-between py-2 min-h-[64px]">
-      <h1 className="text-xl font-medium">{header}</h1>
+    <div className="flex items-center justify-between border-b-[1px] h-20 p-4 shadow-sm">
+      <h1 className="text-lg font-medium">{header}</h1>
 
-      <Button variant="ghost" className="w-12 h-12 p-2 rounded-full">
-        <MessageCircle className="w-6 h-6 text-muted-foreground" />
+      <Button variant="outline" className="w-10 h-10 rounded-full">
+        <span className="text-muted-foreground">{icon}</span>
       </Button>
     </div>
   );

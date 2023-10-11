@@ -8,11 +8,13 @@ import {
   Settings2,
   UserCog,
   Settings,
+  UserPlus2,
 } from "lucide-react";
 import NavItem from "./common/NavItem";
 import ThemeSwitcher from "./common/ThemeSwitcher";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import SettingsModal from "../modals/SettingsModal";
+import Link from "next/link";
 
 interface DesktopNavbarProps {}
 
@@ -25,7 +27,7 @@ const NavItemList = [
   {
     id: 2,
     icon: <Users2 className="w-6 h-6 rounded-full" />,
-    name: "Groups",
+    name: "Requests",
   },
   {
     id: 3,
@@ -36,11 +38,20 @@ const NavItemList = [
 
 const DesktopNavbar: NextPage<DesktopNavbarProps> = () => {
   return (
-    <nav className="w-20 min-w-[80px] bg-primary-foreground dark:bg-primary-foreground/10 border-r-[0.5px] shadow-2xl border-r-slate-800/10">
+    <nav className="w-20 min-w-[80px] border-r border-gray-50 shadow-md">
       <div className="flex flex-col items-center justify-between h-screen py-4 ">
-        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600">
-          <MessageCircle className="w-6 h-6 text-white rounded-full" />
-        </div>
+        <Link
+          href="/"
+          className={buttonVariants({
+            variant: "outline",
+            className:
+              "w-12 h-12 rounded-3xl p-0 bg-blue-500 hover:bg-blue-500 transition-colors duration-200 ease-in-out ",
+          })}
+        >
+          <span>
+            <MessageCircle className="w-6 h-6 text-white rounded-full" />
+          </span>
+        </Link>
 
         <ul className="space-y-6">
           {NavItemList.map((item) => (
@@ -48,18 +59,12 @@ const DesktopNavbar: NextPage<DesktopNavbarProps> = () => {
           ))}
         </ul>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-            <ThemeSwitcher />
-          </div>
-
-          <div className="flex items-center justify-center">
-            <SettingsModal>
-              <Button variant="ghost" className="w-12 h-12 p-2 rounded-full">
-                <Settings className="w-6 h-6 text-muted-foreground" />
-              </Button>
-            </SettingsModal>
-          </div>
+        <div className="flex items-center justify-center">
+          <SettingsModal>
+            <Button variant="outline" className="w-12 h-12 p-2 rounded-full">
+              <Settings className="w-6 h-6 text-muted-foreground" />
+            </Button>
+          </SettingsModal>
         </div>
       </div>
     </nav>

@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Search } from "lucide-react";
 import { NextPage } from "next";
 import SidebarWrapper from "./common/SidebarWrapper";
 import SidebarHeader from "./common/SidebarHeader";
@@ -52,53 +52,55 @@ const chats = [
 
 const Chats: NextPage<ChatsProps> = () => {
   return (
-    <SidebarWrapper>
-      <SidebarHeader header="Chats" />
-      <SidebarSearch />
-      {/* Chat List */}
-      <div className="flex flex-col mt-4 space-y-6 overflow-x-auto">
-        {/* chat list Favourites*/}
+    <>
+      <SidebarHeader header="Chats" icon={<Search className="w-4 h-4" />} />
+      <SidebarWrapper>
+        <SidebarSearch />
+        {/* Chat List */}
+        <div className="flex flex-col mt-4 space-y-6 overflow-x-auto">
+          {/* chat list Favourites*/}
 
-        <div>
-          <p>
-            <span className="text-sm font-semibold">Favourites</span>
-          </p>
+          <div>
+            <p>
+              <span className="text-sm font-semibold">Active Chats</span>
+            </p>
 
-          <div className="flex flex-col mt-2 space-y-2">
-            {favouriteChats.map((chat) => (
-              <div key={chat.id} className="flex items-center space-x-2">
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-primary/5">
-                    {chat.name.split(" ").map((name) => name[0])}
-                  </AvatarFallback>
-                </Avatar>
-                <p className="text-sm font-semibold">{chat.name}</p>
-              </div>
-            ))}
+            <div className="flex flex-col mt-3 space-y-2">
+              {favouriteChats.map((chat) => (
+                <div key={chat.id} className="flex items-center space-x-2">
+                  <Avatar className="w-10 h-10">
+                    <AvatarFallback className="bg-primary/5">
+                      {chat.name.split(" ").map((name) => name[0])}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-sm font-semibold">{chat.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* chat list Recent*/}
+          <div>
+            <p>
+              <span className="text-sm font-semibold">Friend List</span>
+            </p>
+
+            <div className="flex flex-col mt-3 space-y-2">
+              {chats.map((chat) => (
+                <div key={chat.id} className="flex items-center space-x-2">
+                  <Avatar className="w-10 h-10 ">
+                    <AvatarFallback className="bg-primary/5">
+                      {chat.name.split(" ").map((name) => name[0])}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-sm font-semibold">{chat.name}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-
-        {/* chat list Recent*/}
-        <div>
-          <p>
-            <span className="text-sm font-semibold">Recent</span>
-          </p>
-
-          <div className="flex flex-col mt-2 space-y-2">
-            {chats.map((chat) => (
-              <div key={chat.id} className="flex items-center space-x-2">
-                <Avatar className="w-10 h-10 ">
-                  <AvatarFallback className="bg-primary/5">
-                    {chat.name.split(" ").map((name) => name[0])}
-                  </AvatarFallback>
-                </Avatar>
-                <p className="text-sm font-semibold">{chat.name}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </SidebarWrapper>
+      </SidebarWrapper>
+    </>
   );
 };
 

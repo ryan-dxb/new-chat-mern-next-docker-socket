@@ -6,7 +6,11 @@ interface SidebarWrapperProps {
 }
 
 const SidebarWrapper: NextPage<SidebarWrapperProps> = ({ children }) => {
-  return <div className="flex flex-col h-screen p-4">{children}</div>;
+  return (
+    <div className="flex flex-col flex-1 h-full p-4 overflow-hidden ">
+      {children}
+    </div>
+  );
 };
 
 export default SidebarWrapper;

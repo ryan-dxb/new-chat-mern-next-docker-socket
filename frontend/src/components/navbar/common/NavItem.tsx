@@ -21,9 +21,9 @@ const NavItem: NextPage<NavItemProps> = ({ icon, name }) => {
   return (
     <li
       className={cn(
-        "flex w-12 h-12 cursor-pointer rounded-full text-primary/50 hover:text-white  font-light  items-center justify-center  hover:bg-blue-600 transition-colors duration-200 ease-in-out",
+        "flex w-12 h-12 cursor-pointer rounded-full text-muted-foreground  hover:text-white  font-light  items-center justify-center  hover:bg-blue-600 transition-colors duration-200 ease-in-out",
 
-        openTab === name && "bg-blue-600 text-white"
+        openTab === name && "bg-blue-500 text-white"
       )}
       onClick={() => dispatch(setOpenTab(name))}
     >

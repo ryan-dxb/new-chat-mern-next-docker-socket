@@ -9,8 +9,7 @@ const SidebarSearch: NextPage<SidebarSearchProps> = () => {
       <Input
         type="text"
         placeholder="Type a message"
-        className="w-full h-[40px] px-4 py-2 text-sm bg-transparent 
-          focus-visible:outline-blue-500 focus-visible:ring-0  focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 "
+        className="w-full h-10 px-4 text-sm bg-transparent focus:ring-0 focus:outline-none focus-visible:ring-offset-0 focus-visible:ring-blue-500"
       />
     </div>
   );
