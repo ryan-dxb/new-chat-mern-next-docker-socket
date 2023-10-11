@@ -7,9 +7,7 @@ interface SidebarWrapperProps {
 
 const SidebarWrapper: NextPage<SidebarWrapperProps> = ({ children }) => {
   return (
-    <div className="flex flex-col flex-1 h-full p-4 overflow-hidden ">
-      {children}
-    </div>
+    <div className="flex flex-col flex-1 p-4 overflow-hidden ">{children}</div>
   );
 };
 

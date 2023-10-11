@@ -32,7 +32,7 @@ const NavItemList = [
   {
     id: 3,
     icon: <User2 className="w-6 h-6 rounded-full" />,
-    name: "Contacts",
+    name: "Friends",
   },
 ];
 
@@ -40,18 +40,14 @@ const DesktopNavbar: NextPage<DesktopNavbarProps> = () => {
   return (
     <nav className="w-20 min-w-[80px] border-r border-gray-50 shadow-md">
       <div className="flex flex-col items-center justify-between h-screen py-4 ">
-        <Link
-          href="/"
-          className={buttonVariants({
-            variant: "outline",
-            className:
-              "w-12 h-12 rounded-3xl p-0 bg-blue-500 hover:bg-blue-500 transition-colors duration-200 ease-in-out ",
-          })}
-        >
-          <span>
-            <MessageCircle className="w-6 h-6 text-white rounded-full" />
-          </span>
-        </Link>
+        <div className="flex w-12 h-12 p-0 transition-colors duration-200 ease-in-out bg-blue-500 rounded-full cursor-pointer">
+          <Link
+            href="/"
+            className="flex items-center justify-center w-full h-full"
+          >
+            <MessageCircle className="w-6 h-6 text-white " />
+          </Link>
+        </div>
 
         <ul className="space-y-6">
           {NavItemList.map((item) => (

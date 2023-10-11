@@ -5,7 +5,7 @@ interface SidebarSearchProps {}
 
 const SidebarSearch: NextPage<SidebarSearchProps> = () => {
   return (
-    <div className="py-2 min-h-[40px]">
+    <div className="pb-2 min-h-[40px]">
       <Input
         type="text"
         placeholder="Type a message"
