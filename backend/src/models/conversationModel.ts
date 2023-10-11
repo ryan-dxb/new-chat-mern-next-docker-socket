@@ -3,11 +3,11 @@ import bcrypt from "bcrypt";
 
 export interface ConversationInput {
   // Required fields
-  name: string;
-  picture: string;
+  name?: string;
+  groupPicture?: string;
   isGroup: boolean;
-  latestMessage: string;
-  admin: mongoose.Schema.Types.ObjectId;
+  latestMessage?: string;
+  groupAdmin?: mongoose.Schema.Types.ObjectId;
   users: mongoose.Schema.Types.ObjectId[];
 }
 
@@ -20,14 +20,13 @@ export interface ConversationDocument
 
 const ConversationSchema = new mongoose.Schema<ConversationDocument>(
   {
-    name: { type: String, required: true, trim: true },
-    picture: { type: String, required: true },
+    name: { type: String, trim: true },
+    groupPicture: { type: String },
     isGroup: { type: Boolean, default: false },
     latestMessage: { type: String },
-    admin: {
+    groupAdmin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     users: [
       {
