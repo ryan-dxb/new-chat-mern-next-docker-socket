@@ -14,3 +14,8 @@ export interface IUser {
   pendingFriendInvitations?: string[];
   pendingFriendSentRequests?: string[];
 }
+
+export interface FriendRequests {
+  friendRequestsSent: IUser[];
+  friendRequestsReceived: IUser[];
+}

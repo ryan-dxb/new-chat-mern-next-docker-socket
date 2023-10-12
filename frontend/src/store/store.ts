@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 
 import sidebarReducer from "./features/sidebar/sidebarSlice";
 import userReducer from "./features/user/userSlice";
+import friendReducer from "./features/friend/friendSlice";
 
 import { authApi } from "./features/auth/authApi";
 import { userApi } from "./features/user/userApi";
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   [userApi.reducerPath]: userApi.reducer,
   [friendApi.reducerPath]: friendApi.reducer,
   user: persistReducer(persistConfig, userReducer),
+  friend: friendReducer,
   sidebar: sidebarReducer,
 });
 
