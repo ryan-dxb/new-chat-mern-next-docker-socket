@@ -6,6 +6,8 @@ import userReducer from "./features/user/userSlice";
 
 import { authApi } from "./features/auth/authApi";
 import { userApi } from "./features/user/userApi";
+import { friendApi } from "./features/friend/friendApi";
+
 import customStorage from "./customStorage";
 
 const persistConfig = {
@@ -17,6 +19,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
+  [friendApi.reducerPath]: friendApi.reducer,
   user: persistReducer(persistConfig, userReducer),
   sidebar: sidebarReducer,
 });
@@ -28,7 +31,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat([authApi.middleware, userApi.middleware]),
+    }).concat([authApi.middleware, userApi.middleware, friendApi.middleware]),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

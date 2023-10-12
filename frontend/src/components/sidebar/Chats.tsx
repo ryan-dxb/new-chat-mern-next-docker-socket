@@ -53,7 +53,7 @@ const chats = [
 const Chats: NextPage<ChatsProps> = () => {
   return (
     <>
-      <SidebarHeader header="Chats" icon={<Search className="w-4 h-4" />} />
+      <SidebarHeader header="Chats" />
       <SidebarWrapper>
         <SidebarSearch />
         {/* Chat List */}

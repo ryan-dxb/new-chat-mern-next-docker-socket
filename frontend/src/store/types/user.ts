@@ -7,10 +7,10 @@ export interface IUser {
   avatar?: string;
   createdAt: string;
   updatedAt: string;
-  friends: string[];
+  friends?: IUser[];
   status: string;
-  isEmailVerified: boolean;
-  isAccountActive: boolean;
-  pendingFriendInvitations: string[];
-  pendingFriendSentRequests: string[];
+  isEmailVerified?: boolean;
+  isAccountActive?: boolean;
+  pendingFriendInvitations?: string[];
+  pendingFriendSentRequests?: string[];
 }

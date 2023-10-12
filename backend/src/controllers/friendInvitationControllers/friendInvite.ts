@@ -6,6 +6,7 @@ import createHttpError from "http-errors";
 import { UserDocument } from "@/models/userModel";
 import { findUserByEmail, findUserById } from "@/services/auth.service";
 import FriendInvitationModel from "@/models/friendInvitationModel";
+import { createUserObjWithoutPassword } from "@/services/user.service";
 
 const friendInviteController: RequestHandler = asyncHandler(
   async (req: FriendInviteRequest, res: Response, next: NextFunction) => {
@@ -100,9 +101,14 @@ const friendInviteController: RequestHandler = asyncHandler(
 
       // Send Socket.io notification to the receiver
 
+      const userObj = createUserObjWithoutPassword(userFound);
+
       // Send Response
       res.status(201).json({
         message: "Friend invitation sent successfully",
+        data: {
+          user: userObj,
+        },
       });
     } catch (error) {
       next(error);
