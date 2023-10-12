@@ -20,7 +20,7 @@ interface DesktopNavbarProps {}
 
 const NavItemList = [
   {
-    id: 2,
+    id: 1,
     icon: <MessagesSquare className="w-6 h-6 rounded-full" />,
     name: "Chats",
   },

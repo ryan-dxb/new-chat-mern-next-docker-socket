@@ -43,15 +43,29 @@ const LoginForm: NextPage<LoginFormProps> = () => {
     const { email, password } = values;
 
     try {
-      const response = await signIn({ email, password });
+      const response = await signIn({ email, password }).unwrap();
 
-      console.log("response :>> ", response);
+      if (response) {
+        toast({
+          title: "Success",
+          description: response?.message + " !! Redirecting to home page...",
+          className: "bg-green-500",
+        });
+      }
 
-      // if (response && response.data) {
-      //   router.push("/");
-      // }
-    } catch (error) {
-      console.log("error :>> ", error);
+      if (isSuccess) {
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.log("error", error);
+
+      toast({
+        title: "Error",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
   }
 

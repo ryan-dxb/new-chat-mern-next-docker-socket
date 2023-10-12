@@ -1,9 +1,9 @@
 "use client";
+
 import { NextPage } from "next";
 import FormLayout from "./common/FormLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -13,17 +13,17 @@ import { useRegisterUserMutation } from "@/store/features/auth/authApi";
 import { Form } from "@/components/ui/form";
 import FormInputField from "./common/FormInputField";
 import Formfooter from "./common/FormFooter";
-import { Label } from "../ui/label";
-import Image from "next/image";
-import { useState } from "react";
+import { ToastAction, ToastClose } from "../ui/toast";
 
 interface RegisterFormProps {}
 
 const registerFormSchema = z
   .object({
-    firstName: z.string().length(2, "Please enter your first name"),
-    lastName: z.string().length(2, "Please enter your last name"),
-    username: z.string().length(2, "Please enter your username"),
+    firstName: z
+      .string()
+      .min(2, "First name must be at least 2 characters long"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters long"),
+    username: z.string().min(2, "Username must be at least 2 characters long"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters long"),
     passwordConfirmation: z.string().min(6, "Please confirm your password"),
@@ -44,24 +44,17 @@ const RegisterForm: NextPage<RegisterFormProps> = () => {
   const [registerUser, { isLoading, isError, isSuccess, isUninitialized }] =
     useRegisterUserMutation();
 
-  console.log("isSuccess :>> ", isSuccess);
-  console.log("isError :>> ", isError);
-  console.log("isLoading :>> ", isLoading);
-  console.log("isUninitialized:>> ", isUninitialized);
+  // const [avatar, setAvatar] = useState<any>(null); // [1]
+  // const [avatarInput, setAvatarInput] = useState<any>(""); // [1]
+  // const [avatarChanged, setAvatarChanged] = useState(false);
 
-  const [avatar, setAvatar] = useState<any>(null); // [1]
-  const [avatarInput, setAvatarInput] = useState<any>(""); // [1]
-  const [avatarChanged, setAvatarChanged] = useState(false);
-
-  const handleAvatarChange = (e: any) => {
-    if (e.target.files && e.target.files[0]) {
-      setAvatarInput(e.target.files[0]);
-      setAvatar(URL.createObjectURL(e.target.files[0]));
-      setAvatarChanged(true);
-    }
-  };
-
-  console.log("avatar :>> ", avatarInput);
+  // const handleAvatarChange = (e: any) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     setAvatarInput(e.target.files[0]);
+  //     setAvatar(URL.createObjectURL(e.target.files[0]));
+  //     setAvatarChanged(true);
+  //   }
+  // };
 
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
@@ -79,15 +72,46 @@ const RegisterForm: NextPage<RegisterFormProps> = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof registerFormSchema>) {
-    console.log("values :>> ", values);
-    const { firstName, lastName, username, email, password } = values;
+    const {
+      firstName,
+      lastName,
+      username,
+      email,
+      password,
+      passwordConfirmation,
+    } = values;
 
     try {
-      const response = await registerUser(values).unwrap();
+      const response = await registerUser({
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+        passwordConfirm: passwordConfirmation,
+      }).unwrap();
 
-      console.log("response :>> ", response);
-    } catch (error) {
-      console.log("error :>> ", error);
+      if (response) {
+        toast({
+          title: "Success",
+          description: response?.message,
+          className: "bg-green-500",
+        });
+      }
+
+      if (isSuccess) {
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.log("error", error);
+
+      toast({
+        title: "Error",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
   }
 
@@ -128,7 +152,7 @@ const RegisterForm: NextPage<RegisterFormProps> = () => {
               name="passwordConfirmation"
               placeholder="Confirm Password"
             />
-            <div className="flex flex-row items-center space-x-4">
+            {/* <div className="flex flex-row items-center space-x-4">
               <Image
                 src={avatarChanged ? avatar : "/avatar_placeholder.png"}
                 width={50}
@@ -147,7 +171,7 @@ const RegisterForm: NextPage<RegisterFormProps> = () => {
                 className="hidden col-span-3"
                 onChange={handleAvatarChange}
               />
-            </div>
+            </div> */}
 
             <Button type="submit" className="w-full">
               Submit

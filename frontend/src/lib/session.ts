@@ -1,9 +1,7 @@
 import * as jose from "jose";
 import { setCookie } from "cookies-next";
 
-export const secret = new TextEncoder().encode(
-  process.env.NEXT_PUBLIC_SESSION_SECRET as string
-);
+export const secret = new TextEncoder().encode("mysecret");
 
 export interface Session extends jose.JWTPayload {
   accessToken: string;

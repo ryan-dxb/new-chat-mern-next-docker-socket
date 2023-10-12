@@ -47,7 +47,8 @@ const registerController: RequestHandler = asyncHandler(
 
       // Send Response
       res.status(201).json({
-        message: "User created successfully",
+        message:
+          "Registration successful. Please check your email to verify your account",
         data: {
           user: newUser,
         },

@@ -1,26 +1,16 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-import { logout, setCredentials } from "./authSlice";
-
 import customFetchBase from "../../api/customBaseQuery";
-import { IUser } from "../../types";
+import { IUser } from "../../types/user";
 import { useAppDispatch } from "@/store/hooks";
 import { createSession } from "@/lib/session";
-
-export interface AuthResponse {
-  message: string;
-  data: {
-    user: IUser;
-    accessToken: string;
-  };
-}
-
-export interface RegisterResponse {
-  message: string;
-  data: {
-    user: IUser;
-  };
-}
+import {
+  RegisterCredentials,
+  RegisterResponse,
+  SignInCredentials,
+  SignInResponse,
+} from "@/store/types/auth";
+import { setUser } from "../user/userSlice";
 
 export interface VerifyResponse {
   success: boolean;
@@ -32,7 +22,7 @@ export const authApi = createApi({
   baseQuery: customFetchBase,
   tagTypes: ["Auth"],
   endpoints: (builder) => ({
-    loginUser: builder.mutation<AuthResponse, any>({
+    loginUser: builder.mutation<SignInResponse, SignInCredentials>({
       query: (credentials) => ({
         url: "auth/login",
         method: "POST",
@@ -48,7 +38,7 @@ export const authApi = createApi({
 
           console.log("onQueryStarted data", data);
           if (data.data.user) {
-            dispatch(setCredentials(data));
+            dispatch(setUser(data.data));
 
             const sessionObj = {
               accessToken: data.data.accessToken,
@@ -65,36 +55,54 @@ export const authApi = createApi({
         }
       },
 
-      transformResponse: (response: AuthResponse) => {
-        console.log("transformResponse");
+      transformResponse: (response: SignInResponse) => {
         return response;
+      },
+
+      transformErrorResponse: (response: {
+        status: number;
+        data: { error: { status: number; message: string } };
+      }) => {
+        return {
+          status: response.status,
+          message: response.data.error.message,
+        };
       },
     }),
 
-    registerUser: builder.mutation<RegisterResponse, any>({
-      query: (credentials) => ({
+    registerUser: builder.mutation<RegisterResponse, RegisterCredentials>({
+      query: (credentials: RegisterCredentials) => ({
         url: "auth/register",
         method: "POST",
         body: credentials,
         credentials: "include",
       }),
 
-      transformResponse: (response: any) => {
+      transformResponse: (response: RegisterResponse) => {
         console.log("transformResponse", response);
-        response.data.user;
         return response;
       },
 
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        console.log("onQueryStarted", args, queryFulfilled);
-
-        try {
-          const data = await queryFulfilled;
-          console.log("onQueryStarted data", data);
-        } catch (err) {
-          console.log("onQueryStarted error", err);
-        }
+      transformErrorResponse: (response: {
+        status: number;
+        data: { error: { status: number; message: string } };
+      }) => {
+        return {
+          status: response.status,
+          message: response.data.error.message,
+        };
       },
+
+      // onQueryStarted(args, { dispatch, queryFulfilled }) {
+      //   console.log("onQueryStarted", args, queryFulfilled);
+
+      //   try {
+      //     const data = queryFulfilled;
+      //     console.log("onQueryStarted data", data);
+      //   } catch (err) {
+      //     console.log("onQueryStarted error", err);
+      //   }
+      // },
     }),
 
     // verifyUser: builder.mutation<VerifyResponse, any>({
@@ -255,7 +263,7 @@ export const authApi = createApi({
         try {
           const data = await queryFulfilled;
 
-          dispatch(logout());
+          // dispatch(logout());
         } catch (err) {
           console.log("onQueryStarted error", err);
         }

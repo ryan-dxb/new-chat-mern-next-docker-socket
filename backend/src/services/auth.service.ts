@@ -22,7 +22,6 @@ export const createNewUser = async (userData: UserData) => {
     password,
     firstName,
     lastName,
-    // roles: [Roles.ADMIN, Roles.USER],
     isAccountActive: true,
     avatar: avatar ? avatar : DEFAULT_AVATAR,
   });

@@ -5,13 +5,9 @@ import {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
 import { Mutex } from "async-mutex";
-import {
-  logout,
-  setAccessToken,
-  setCredentials,
-} from "../features/auth/authSlice";
 // import { logout } from "../auth/authSlice";
 import { RootState, store } from "../store";
+import { setToken } from "../features/user/userSlice";
 
 const baseUrl = `/api/v1`;
 
@@ -26,7 +22,7 @@ const baseQuery = fetchBaseQuery({
     "Access-Control-Allow-Credentials": "true",
   },
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.token;
+    const token = (getState() as RootState).user.token;
 
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
@@ -83,10 +79,12 @@ const customFetchBase: BaseQueryFn<
           // Store the new tokens
           const accessToken = refreshResultData?.data.accessToken;
 
+          console.log("refreshed token", accessToken);
+
           // Store new access token in redux
           api.dispatch(
-            setAccessToken({
-              token: accessToken,
+            setToken({
+              accessToken,
             })
           );
           // Modify the headers to add the access token
@@ -102,7 +100,7 @@ const customFetchBase: BaseQueryFn<
           result = await baseQuery(args, api, extraOptions);
           console.log("refreshed token", result);
         } else {
-          api.dispatch(logout());
+          // api.dispatch(logout());
           console.log("refreshed token error", refreshResult);
 
           // window.location.href = "/auth/login";
