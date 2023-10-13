@@ -2,7 +2,6 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 
 import customFetchBase from "../../api/customBaseQuery";
 import { IUser } from "../../types/user";
-import { useAppDispatch } from "@/store/hooks";
 import { createSession } from "@/lib/session";
 import {
   RegisterCredentials,
@@ -10,7 +9,7 @@ import {
   SignInCredentials,
   SignInResponse,
 } from "@/store/types/auth";
-import { setUser } from "../user/userSlice";
+import { logout, setUser } from "../user/userSlice";
 
 export interface VerifyResponse {
   success: boolean;
@@ -263,7 +262,7 @@ export const authApi = createApi({
         try {
           const data = await queryFulfilled;
 
-          // dispatch(logout());
+          dispatch(logout());
         } catch (err) {
           console.log("onQueryStarted error", err);
         }

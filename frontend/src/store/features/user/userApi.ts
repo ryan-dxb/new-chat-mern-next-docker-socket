@@ -2,10 +2,10 @@ import customFetchBase from "@/store/api/customBaseQuery";
 import { FriendRequests } from "@/store/types/user";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import {
+  setAllFriends,
   setFriendRequests,
   setFriendRequestsReceived,
   setFriendRequestsSent,
-  setFriends,
 } from "../friend/friendSlice";
 import { AllFriendsResponse } from "@/store/types/friend";
 
@@ -60,7 +60,7 @@ export const userApi = createApi({
           const { data } = await queryFulfilled;
 
           if (data) {
-            dispatch(setFriends(data.data));
+            dispatch(setAllFriends(data.data));
           }
         } catch (err) {
           dispatch(userApi.util.invalidateTags(["AllFriends"]));

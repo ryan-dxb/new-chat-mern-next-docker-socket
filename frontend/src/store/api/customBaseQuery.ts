@@ -7,7 +7,7 @@ import {
 import { Mutex } from "async-mutex";
 // import { logout } from "../auth/authSlice";
 import { RootState, store } from "../store";
-import { setToken } from "../features/user/userSlice";
+import { logout, setToken } from "../features/user/userSlice";
 
 const baseUrl = `/api/v1`;
 
@@ -49,12 +49,8 @@ const customFetchBase: BaseQueryFn<
   // wait until the mutex is available without locking it
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
-  if (
-    (result.error && result.error.status === 401) ||
-    result.error?.status === 403
-  ) {
-    console.log("refreshing token ERROR", result.error);
 
+  if (result.error?.status === 401 || result.error?.status === 403) {
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
 
@@ -75,11 +71,9 @@ const customFetchBase: BaseQueryFn<
 
         if (refreshResult.data) {
           const refreshResultData = refreshResult.data as RefreshTokenResponse;
-          console.log("refreshed token", refreshResultData?.data.accessToken);
+
           // Store the new tokens
           const accessToken = refreshResultData?.data.accessToken;
-
-          console.log("refreshed token", accessToken);
 
           // Store new access token in redux
           api.dispatch(
@@ -87,9 +81,10 @@ const customFetchBase: BaseQueryFn<
               accessToken,
             })
           );
-          // Modify the headers to add the access token
-          console.log("extraOptions", args);
 
+          // Create a new Session object with the new access token
+
+          // Modify the headers to add the access token
           let { headers } = args as FetchArgs;
           headers = {
             ...headers,
@@ -98,11 +93,8 @@ const customFetchBase: BaseQueryFn<
 
           // Retry the initial query
           result = await baseQuery(args, api, extraOptions);
-          console.log("refreshed token", result);
         } else {
-          // api.dispatch(logout());
-          console.log("refreshed token error", refreshResult);
-
+          api.dispatch(logout());
           // window.location.href = "/auth/login";
         }
       } finally {

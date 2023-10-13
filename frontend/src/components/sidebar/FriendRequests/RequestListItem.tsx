@@ -55,14 +55,14 @@ const RequestListItem: NextPage<RequestListItemProps> = ({
               variant="outline"
               icon={<Check className="w-4 h-4" />}
               action="accept"
-              request_id={request.request_id!}
+              request={request}
             />
 
             <RequestActionButton
               variant="destructive"
               icon={<X className="w-4 h-4" />}
               action="reject"
-              request_id={request.request_id!}
+              request={request}
             />
           </>
         )}
@@ -71,7 +71,7 @@ const RequestListItem: NextPage<RequestListItemProps> = ({
             variant="destructive"
             icon={<Trash2 className="w-4 h-4" />}
             action="cancel"
-            request_id={request.request_id!}
+            request={request}
           />
         )}
       </div>

@@ -23,11 +23,8 @@ export const friendSlice = createSlice({
   name: "friend",
   initialState,
   reducers: {
-    setFriends: (state, action) => {
-      console.log("action.payload", action.payload);
-
-      // Push the new friend to the friends array
-      state.friends = [...state.friends, ...action.payload];
+    setAllFriends: (state, action) => {
+      state.friends = [...action.payload];
     },
     setFriendRequestsSent: (
       state,
@@ -86,6 +83,11 @@ export const friendSlice = createSlice({
       state.friendRequestsSent = action.payload.friendRequestsSent;
     },
 
+    setFriend: (state, action) => {
+      // Push the new friend to the friends array
+      state.friends = [...state.friends, action.payload];
+    },
+
     setOnlineFriends: (state, action) => {
       state.onlineFriends = [...state.onlineFriends, action.payload];
     },
@@ -93,7 +95,8 @@ export const friendSlice = createSlice({
 });
 
 export const {
-  setFriends,
+  setAllFriends,
+  setFriend,
   setFriendRequestsSent,
   setFriendRequestsReceived,
   setOnlineFriends,

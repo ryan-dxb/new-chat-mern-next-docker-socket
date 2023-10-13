@@ -13,20 +13,32 @@ const fetchAllConversationsController: RequestHandler = asyncHandler(
         $in: [userId],
       },
     })
-      .populate("users", "-password")
-      .populate("groupAdmin", "-password")
+      .populate("users", "firstName lastName username avatar email id status")
+      .populate(
+        "groupAdmin",
+        "firstName lastName username avatar email id status"
+      )
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
 
     // Populate the latest message of each conversation
     conversations = await UserModel.populate(conversations, {
       path: "latestMessage.sender",
-      select: "-password",
+      select: "firstName lastName username avatar email id status",
+    });
+
+    const conversationObject = conversations.map((conversation) => {
+      return {
+        id: conversation._id,
+        ...conversation.toObject(),
+      };
     });
 
     res.status(200).json({
-      success: true,
-      conversations,
+      message: "Conversations Fetched",
+      data: {
+        conversations: conversationObject,
+      },
     });
   }
 );

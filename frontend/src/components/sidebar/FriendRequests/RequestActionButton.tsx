@@ -10,13 +10,12 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   removeFriendRequestReceived,
   removeFriendRequestSent,
-  selectFriendRequestsReceivedById,
-  setFriends,
+  setFriend,
 } from "@/store/features/friend/friendSlice";
 import { FriendRequestType } from "@/store/types/friend";
 
 interface RequestActionButtonProps {
-  request_id: string;
+  request: FriendRequestType;
   variant?:
     | "default"
     | "destructive"
@@ -34,11 +33,9 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
   variant,
   icon,
   action,
-  request_id,
+  request,
 }) => {
   const dispatch = useAppDispatch();
-
-  const friend = useAppSelector(selectFriendRequestsReceivedById(request_id));
 
   const [cancelInvite] = useCancelFriendRequestMutation();
   const [acceptInvite] = useAcceptFriendRequestMutation();
@@ -62,6 +59,17 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
       const res = await acceptInvite(request_id).unwrap();
 
       if (res) {
+        dispatch(
+          setFriend({
+            friend_id: request.userDetails.id,
+            firstName: request.userDetails.firstName,
+            lastName: request.userDetails.lastName,
+            avatar: request.userDetails.avatar,
+            username: request.userDetails.username,
+            email: request.userDetails.email,
+            status: request.userDetails.status,
+          })
+        );
         dispatch(removeFriendRequestReceived(request_id));
       }
       console.log(res);
@@ -102,7 +110,7 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
     <Button
       variant={variant}
       className="w-8 h-8 rounded-full"
-      onClick={() => handleAction(action, request_id)}
+      onClick={() => handleAction(action, request.request_id)}
     >
       <span>{icon}</span>
     </Button>

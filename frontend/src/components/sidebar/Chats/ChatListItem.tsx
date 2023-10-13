@@ -8,11 +8,13 @@ import { useAppDispatch } from "@/store/hooks";
 import { setSelectedConversation } from "@/store/features/conversation/conversationSlice";
 import { useGetOrCreateConversationMutation } from "@/store/features/conversation/conversationApi";
 
-interface FriendListItemProps {
-  friend: FriendModel;
+interface ChatListItemProps {
+  conversation: any;
 }
 
-const FriendListItem: NextPage<FriendListItemProps> = ({ friend }) => {
+const ChatListItem: NextPage<ChatListItemProps> = ({ conversation }) => {
+  console.log(conversation);
+
   const dispatch = useAppDispatch();
 
   const [getOrCreateConversation, { isLoading, isError }] =
@@ -27,35 +29,34 @@ const FriendListItem: NextPage<FriendListItemProps> = ({ friend }) => {
       console.log(res.data);
     }
   };
-
   return (
     <div
-      key={friend.id}
+      key={conversation._id}
       className="flex cursor-pointer group"
-      onClick={() => getOrCreateConversationHandler(friend.friend_id!)}
+      // onClick={() => getOrCreateConversationHandler(friend.friend_id!)}
     >
       <div className="flex items-center justify-between flex-1 p-2 rounded-md group-hover:bg-primary/5">
         <div className="flex flex-row items-center flex-1 space-x-2 ">
           <Avatar className="w-10 h-10 ">
             <AvatarFallback className="text-xs bg-primary/5">
-              {friend && friend.firstName && friend.lastName ? (
+              {/* {friend && friend.firstName && friend.lastName ? (
                 <>{friend.firstName[0] + friend.lastName[0]}</>
               ) : (
-                <>
-                  <User className="w-4 h-4" />
-                </>
-              )}
+                <> */}
+              <User className="w-4 h-4" />
+              {/* </> */}
+              {/* )} */}
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-sm font-semibold">
+            {/* <p className="text-sm font-semibold">
               {friend && friend.firstName && friend.lastName
                 ? friend.firstName + " " + friend.lastName
                 : "Unknown"}
             </p>
             <p className="text-xs font-semibold text-muted-foreground">
               {friend.status ?? "Hey there! I'm using Messenger."}
-            </p>
+            </p> */}
           </div>
         </div>
 
@@ -73,4 +74,4 @@ const FriendListItem: NextPage<FriendListItemProps> = ({ friend }) => {
   );
 };
 
-export default FriendListItem;
+export default ChatListItem;

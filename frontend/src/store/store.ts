@@ -4,10 +4,12 @@ import { persistReducer, persistStore } from "redux-persist";
 import sidebarReducer from "./features/sidebar/sidebarSlice";
 import userReducer from "./features/user/userSlice";
 import friendReducer from "./features/friend/friendSlice";
+import conversationReducer from "./features/conversation/conversationSlice";
 
 import { authApi } from "./features/auth/authApi";
 import { userApi } from "./features/user/userApi";
 import { friendApi } from "./features/friend/friendApi";
+import { conversationApi } from "./features/conversation/conversationApi";
 
 import customStorage from "./customStorage";
 
@@ -21,9 +23,11 @@ const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
   [friendApi.reducerPath]: friendApi.reducer,
+  [conversationApi.reducerPath]: conversationApi.reducer,
   user: persistReducer(persistConfig, userReducer),
   friend: friendReducer,
   sidebar: sidebarReducer,
+  conversation: conversationReducer,
 });
 
 export const store = configureStore({
@@ -33,7 +37,12 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat([authApi.middleware, userApi.middleware, friendApi.middleware]),
+    }).concat([
+      authApi.middleware,
+      userApi.middleware,
+      friendApi.middleware,
+      conversationApi.middleware,
+    ]),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

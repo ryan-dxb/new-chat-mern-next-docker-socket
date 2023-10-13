@@ -43,11 +43,13 @@ export const userSlice = createSlice({
       state.token = action.payload.accessToken;
     },
 
-    logout: () => initialState,
+    logout: () => {
+      return initialState;
+    },
   },
 });
 
-export const { setUser, setToken } = userSlice.actions;
+export const { setUser, setToken, logout } = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user.userDetails;
 
