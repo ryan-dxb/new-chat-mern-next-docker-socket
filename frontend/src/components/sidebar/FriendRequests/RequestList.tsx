@@ -6,7 +6,10 @@ import { useAppSelector } from "@/store/hooks";
 import { selectUser } from "@/store/features/user/userSlice";
 import RequestListHeader from "./RequestListHeader";
 import { useGetFriendRequestsQuery } from "@/store/features/user/userApi";
-import { selectFriendRequests } from "@/store/features/friend/friendSlice";
+import {
+  selectFriendRequestsReceived,
+  selectFriendRequestsSent,
+} from "@/store/features/friend/friendSlice";
 import { useCancelFriendRequestMutation } from "@/store/features/friend/friendApi";
 
 interface RequestListProps {
@@ -14,8 +17,9 @@ interface RequestListProps {
 }
 
 const RequestList: NextPage<RequestListProps> = ({ requestType }) => {
-  const { friendRequestsReceived, friendRequestsSent } =
-    useAppSelector(selectFriendRequests);
+  const friendRequestsReceived = useAppSelector(selectFriendRequestsReceived);
+  const friendRequestsSent = useAppSelector(selectFriendRequestsSent);
+
   const { data } = useGetFriendRequestsQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });

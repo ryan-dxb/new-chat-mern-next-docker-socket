@@ -1,5 +1,6 @@
 import {
   getAllFriendRequests,
+  getAllFriends,
   getOwnProfile,
   updateOwnAccount,
 } from "@/controllers/userControllers";
@@ -17,6 +18,7 @@ router
   .patch(isAuthenticated, updateOwnAccount);
 
 router.get("/friend-requests", isAuthenticated, getAllFriendRequests);
+router.get("/get-friends", isAuthenticated, getAllFriends);
 // router.route("/login").post(schemaValidator(loginUserSchema), login);
 // router.route("/refresh-token").post(refreshToken);
 // router.route("/logout").post(isAuthenticated, logout);

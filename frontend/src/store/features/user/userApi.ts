@@ -5,12 +5,14 @@ import {
   setFriendRequests,
   setFriendRequestsReceived,
   setFriendRequestsSent,
+  setFriends,
 } from "../friend/friendSlice";
+import { AllFriendsResponse } from "@/store/types/friend";
 
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: customFetchBase,
-  tagTypes: ["User", "FriendRequests"],
+  tagTypes: ["User", "FriendRequests", "AllFriends"],
   endpoints: (builder) => ({
     getUser: builder.query({
       query: () => ({
@@ -18,7 +20,7 @@ export const userApi = createApi({
         method: "GET",
         credentials: "include",
       }),
-      providesTags: ["User"],
+      providesTags: ["User", "AllFriends"],
     }),
 
     getFriendRequests: builder.query<FriendRequests, any>({
@@ -45,6 +47,27 @@ export const userApi = createApi({
       },
     }),
 
+    getFriends: builder.query<AllFriendsResponse, any>({
+      query: () => ({
+        url: "user/get-friends",
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["AllFriends"],
+
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+
+          if (data) {
+            dispatch(setFriends(data.data));
+          }
+        } catch (err) {
+          dispatch(userApi.util.invalidateTags(["AllFriends"]));
+        }
+      },
+    }),
+
     updateUser: builder.mutation({
       query: (data) => ({
         url: "user",
@@ -62,4 +85,5 @@ export const {
   useLazyGetUserQuery,
   useUpdateUserMutation,
   useGetFriendRequestsQuery,
+  useGetFriendsQuery,
 } = userApi;

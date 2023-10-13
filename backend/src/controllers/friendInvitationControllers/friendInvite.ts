@@ -120,7 +120,7 @@ const friendInviteController: RequestHandler = asyncHandler(
         message: "Friend invitation sent successfully",
         data: {
           request_id: newFriendInvitation._id,
-          newFriendInvitation: newFriendInvitationObj.receiver,
+          userDetails: newFriendInvitationObj.receiver,
         },
       });
     } catch (error) {

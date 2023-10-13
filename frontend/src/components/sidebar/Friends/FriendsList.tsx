@@ -4,15 +4,23 @@ import { selectUser } from "@/store/features/user/userSlice";
 import { useAppSelector } from "@/store/hooks";
 import { NextPage } from "next";
 import FriendListItem from "./FriendListItem";
+import { useGetFriendsQuery } from "@/store/features/user/userApi";
+import { selectFriends } from "@/store/features/friend/friendSlice";
 
 interface FriendsListProps {}
 
 const FriendsList: NextPage<FriendsListProps> = () => {
+  const { data } = useGetFriendsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const friends = useAppSelector(selectFriends);
+
   const user = useAppSelector(selectUser);
 
   return (
     <>
-      {user?.friends && user?.friends.length > 0 && (
+      {friends && friends.length > 0 && (
         <div className="flex-grow-0 h-fit">
           <p>
             <span className="text-xs font-semibold text-muted-foreground">
@@ -24,8 +32,8 @@ const FriendsList: NextPage<FriendsListProps> = () => {
 
       <ScrollArea className="flex flex-col flex-1  space-y-2 mt-2  h-[90%]">
         <div className="flex flex-col flex-1 space-y-3">
-          {user?.friends && user?.friends.length > 0 ? (
-            user?.friends?.map((friend) => (
+          {friends && friends.length > 0 ? (
+            friends.map((friend) => (
               <FriendListItem key={friend.id} friend={friend} />
             ))
           ) : (

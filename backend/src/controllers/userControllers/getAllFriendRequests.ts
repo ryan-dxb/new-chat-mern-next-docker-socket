@@ -56,7 +56,7 @@ const getAllFriendRequestsController: RequestHandler = asyncHandler(
         }) => {
           return {
             request_id: friend._id,
-            receiver: friend.receiver,
+            userDetails: friend.receiver,
           };
         }
       );
@@ -75,7 +75,7 @@ const getAllFriendRequestsController: RequestHandler = asyncHandler(
         }) => {
           return {
             request_id: friend._id,
-            sender: friend.sender,
+            userDetails: friend.sender,
           };
         }
       );

@@ -6,6 +6,14 @@ import {
 } from "@/store/features/friend/friendApi";
 import { VariantProps } from "class-variance-authority";
 import { NextPage } from "next";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  removeFriendRequestReceived,
+  removeFriendRequestSent,
+  selectFriendRequestsReceivedById,
+  setFriends,
+} from "@/store/features/friend/friendSlice";
+import { FriendRequestType } from "@/store/types/friend";
 
 interface RequestActionButtonProps {
   request_id: string;
@@ -28,6 +36,10 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
   action,
   request_id,
 }) => {
+  const dispatch = useAppDispatch();
+
+  const friend = useAppSelector(selectFriendRequestsReceivedById(request_id));
+
   const [cancelInvite] = useCancelFriendRequestMutation();
   const [acceptInvite] = useAcceptFriendRequestMutation();
   const [rejectInvite] = useRejectFriendRequestMutation();
@@ -35,6 +47,10 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
   const handleCancelInvite = async (request_id: string) => {
     try {
       const res = await cancelInvite(request_id).unwrap();
+
+      if (res) {
+        dispatch(removeFriendRequestSent(request_id));
+      }
       console.log(res);
     } catch (err) {
       console.log(err);
@@ -44,6 +60,10 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
   const handleAcceptInvite = async (request_id: string) => {
     try {
       const res = await acceptInvite(request_id).unwrap();
+
+      if (res) {
+        dispatch(removeFriendRequestReceived(request_id));
+      }
       console.log(res);
     } catch (err) {
       console.log(err);
@@ -53,7 +73,10 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
   const handleRejectInvite = async (request_id: string) => {
     try {
       const res = await rejectInvite(request_id).unwrap();
-      console.log(res);
+
+      if (res) {
+        dispatch(removeFriendRequestReceived(request_id));
+      }
     } catch (err) {
       console.log(err);
     }

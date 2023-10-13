@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { IUser } from "../../types/user";
+import { FriendModel, FriendRequestType } from "@/store/types/friend";
 
 interface FriendState {
-  friends: IUser[];
-  friendRequestsSent: IUser[];
-  friendRequestsReceived: IUser[];
+  friends: FriendModel[];
+  friendRequestsSent: FriendRequestType[];
+
+  friendRequestsReceived: FriendRequestType[];
+
   onlineFriends: IUser[];
 }
 
@@ -21,33 +24,59 @@ export const friendSlice = createSlice({
   initialState,
   reducers: {
     setFriends: (state, action) => {
-      // Push the new friend to the friends array
-      state.friends = [...state.friends, action.payload];
-    },
-    setFriendRequestsSent: (state, action) => {
       console.log("action.payload", action.payload);
 
+      // Push the new friend to the friends array
+      state.friends = [...state.friends, ...action.payload];
+    },
+    setFriendRequestsSent: (
+      state,
+      action: {
+        payload: FriendRequestType;
+      }
+    ) => {
+      console.log("action.payload", action.payload);
+
+      const { request_id, userDetails } = action.payload;
+
       state.friendRequestsSent = [
-        ...state.friendRequestsSent,
-        action.payload.data.newFriendInvitation,
+        ...state.friendRequestsSent, // Keep the old requests
+        {
+          request_id: request_id,
+          userDetails: userDetails,
+        },
       ];
     },
-    setFriendRequestsReceived: (state, action) => {
+    setFriendRequestsReceived: (
+      state,
+      action: {
+        payload: FriendRequestType;
+      }
+    ) => {
+      const { request_id, userDetails } = action.payload;
+
       state.friendRequestsReceived = [
-        ...state.friendRequestsReceived,
-        action.payload,
+        ...state.friendRequestsReceived, // Keep the old requests
+        {
+          request_id: request_id,
+          userDetails: userDetails,
+        },
       ];
     },
 
     removeFriendRequestSent: (state, action) => {
+      console.log("action.payload", action.payload);
+
       state.friendRequestsSent = state.friendRequestsSent.filter(
-        (friend) => friend.id !== action.payload
+        (request) => request.request_id !== action.payload
       );
     },
 
     removeFriendRequestReceived: (state, action) => {
+      console.log("action.payload", action.payload);
+
       state.friendRequestsReceived = state.friendRequestsReceived.filter(
-        (friend) => friend.id !== action.payload
+        (request) => request.request_id !== action.payload
       );
     },
 
@@ -83,9 +112,12 @@ export const selectFriendRequestsReceived = (state: RootState) =>
 export const selectOnlineFriends = (state: RootState) =>
   state.friend.onlineFriends;
 
-export const selectFriendRequests = (state: RootState) => ({
-  friendRequestsReceived: state.friend.friendRequestsReceived,
-  friendRequestsSent: state.friend.friendRequestsSent,
-});
+// Get friend request by id
+export const selectFriendRequestsReceivedById =
+  (request_id: string) => (state: RootState) => {
+    return state.friend.friendRequestsSent.find(
+      (request) => request.request_id === request_id
+    );
+  };
 
 export default friendSlice.reducer;

@@ -2,9 +2,10 @@ import { IUser } from "@/store/types/user";
 import { NextPage } from "next";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { User } from "lucide-react";
+import { FriendModel } from "@/store/types/friend";
 
 interface FriendListItemProps {
-  friend: IUser;
+  friend: FriendModel;
 }
 
 const FriendListItem: NextPage<FriendListItemProps> = ({ friend }) => {
