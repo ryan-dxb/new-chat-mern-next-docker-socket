@@ -29,8 +29,6 @@ const AddFriendSchema = z.object({
 const AddFriendModal: NextPage<AddFriendModalProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log("isOpen", isOpen);
-
   const [sendFriendRequest, { isSuccess, isError, isLoading }] =
     useSendFriendRequestMutation();
 

@@ -3,7 +3,7 @@ import { RequestHandler, Response, NextFunction } from "express";
 import { FriendInviteRequest } from "@/@types/friendInvite";
 import sendError from "@/utils/sendError";
 import createHttpError from "http-errors";
-import { UserDocument } from "@/models/userModel";
+import UserModel, { UserDocument } from "@/models/userModel";
 import { findUserByEmail, findUserById } from "@/services/auth.service";
 import FriendInvitationModel from "@/models/friendInvitationModel";
 import { createUserObjWithoutPassword } from "@/services/user.service";
@@ -85,7 +85,7 @@ const friendInviteController: RequestHandler = asyncHandler(
       }
 
       // Create the friend invitation
-      const newFriendInvitation = await FriendInvitationModel.create({
+      let newFriendInvitation = await FriendInvitationModel.create({
         sender: userFound._id,
         receiver: receiverFound._id,
       });
@@ -101,13 +101,25 @@ const friendInviteController: RequestHandler = asyncHandler(
 
       // Send Socket.io notification to the receiver
 
-      const userObj = createUserObjWithoutPassword(userFound);
+      // Create new invitation object without password
 
       // Send Response
+
+      let newFriendInvitationObj = await UserModel.populate(
+        newFriendInvitation,
+        {
+          path: "receiver",
+          select: "email username status avatar firstName lastName",
+        }
+      );
+      console.log("newFriendInvitation", newFriendInvitationObj.receiver);
+
+      // Create a new invitation object without password
+
       res.status(201).json({
         message: "Friend invitation sent successfully",
         data: {
-          user: userObj,
+          newFriendInvitation: newFriendInvitationObj.receiver,
         },
       });
     } catch (error) {

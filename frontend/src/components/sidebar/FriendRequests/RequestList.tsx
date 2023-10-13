@@ -6,23 +6,21 @@ import { useAppSelector } from "@/store/hooks";
 import { selectUser } from "@/store/features/user/userSlice";
 import RequestListHeader from "./RequestListHeader";
 import { useGetFriendRequestsQuery } from "@/store/features/user/userApi";
+import { selectFriendRequests } from "@/store/features/friend/friendSlice";
 
 interface RequestListProps {
   requestType: string;
 }
 
 const RequestList: NextPage<RequestListProps> = ({ requestType }) => {
+  const { friendRequestsReceived, friendRequestsSent } =
+    useAppSelector(selectFriendRequests);
   const { data, isFetching, isSuccess, isError } = useGetFriendRequestsQuery(
     undefined,
     {
       refetchOnMountOrArgChange: true,
     }
   );
-
-  const friendRequestsSent = data?.friendRequestsSent || [];
-  const friendRequestsReceived = data?.friendRequestsReceived || [];
-
-  console.log("friendRequestsSent", friendRequestsSent);
 
   //  Get the list of sent requests and received requests
 

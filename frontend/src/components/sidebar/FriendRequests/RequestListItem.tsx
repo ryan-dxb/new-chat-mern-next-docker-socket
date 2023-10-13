@@ -13,8 +13,6 @@ const RequestListItem: NextPage<RequestListItemProps> = ({
   request,
   requestType,
 }) => {
-  console.log("request", request);
-
   return (
     <div key={request.id} className="flex items-center justify-between mr-4">
       <div className="flex flex-row items-center space-x-2">

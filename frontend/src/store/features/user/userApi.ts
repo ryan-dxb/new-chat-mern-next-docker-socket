@@ -1,11 +1,16 @@
 import customFetchBase from "@/store/api/customBaseQuery";
 import { FriendRequests } from "@/store/types/user";
 import { createApi } from "@reduxjs/toolkit/query/react";
+import {
+  setFriendRequests,
+  setFriendRequestsReceived,
+  setFriendRequestsSent,
+} from "../friend/friendSlice";
 
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: customFetchBase,
-  tagTypes: ["User"],
+  tagTypes: ["User", "FriendRequests"],
   endpoints: (builder) => ({
     getUser: builder.query({
       query: () => ({
@@ -22,10 +27,22 @@ export const userApi = createApi({
         method: "GET",
         credentials: "include",
       }),
-      providesTags: ["User"],
+      providesTags: ["FriendRequests"],
 
       // We want to refetch this query every time a mutation is made
       // to the friend requests
+
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+
+          if (data) {
+            dispatch(setFriendRequests(data));
+          }
+        } catch (err) {
+          dispatch(userApi.util.invalidateTags(["FriendRequests"]));
+        }
+      },
     }),
 
     updateUser: builder.mutation({
