@@ -7,6 +7,7 @@ import { selectUser } from "@/store/features/user/userSlice";
 import RequestListHeader from "./RequestListHeader";
 import { useGetFriendRequestsQuery } from "@/store/features/user/userApi";
 import { selectFriendRequests } from "@/store/features/friend/friendSlice";
+import { useCancelFriendRequestMutation } from "@/store/features/friend/friendApi";
 
 interface RequestListProps {
   requestType: string;
@@ -15,14 +16,9 @@ interface RequestListProps {
 const RequestList: NextPage<RequestListProps> = ({ requestType }) => {
   const { friendRequestsReceived, friendRequestsSent } =
     useAppSelector(selectFriendRequests);
-  const { data, isFetching, isSuccess, isError } = useGetFriendRequestsQuery(
-    undefined,
-    {
-      refetchOnMountOrArgChange: true,
-    }
-  );
-
-  //  Get the list of sent requests and received requests
+  const { data } = useGetFriendRequestsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   return (
     <div className="flex-1  max-h-[50%] min-h-[320px] h-full border p-2">
@@ -43,7 +39,7 @@ const RequestList: NextPage<RequestListProps> = ({ requestType }) => {
             friendRequestsSent.length >= 1 &&
             friendRequestsSent.map((request) => (
               <RequestListItem
-                key={request.id}
+                key={request.request_id + "sent"}
                 request={request}
                 requestType={requestType}
               />
@@ -53,7 +49,7 @@ const RequestList: NextPage<RequestListProps> = ({ requestType }) => {
             friendRequestsReceived.length >= 1 &&
             friendRequestsReceived.map((request) => (
               <RequestListItem
-                key={request.id}
+                key={request.request_id + "received"}
                 request={request}
                 requestType={requestType}
               />

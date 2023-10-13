@@ -13,6 +13,7 @@ export interface IUser {
   isAccountActive?: boolean;
   pendingFriendInvitations?: string[];
   pendingFriendSentRequests?: string[];
+  request_id?: string;
 }
 
 export interface FriendRequests {

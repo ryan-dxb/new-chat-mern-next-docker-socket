@@ -119,6 +119,7 @@ const friendInviteController: RequestHandler = asyncHandler(
       res.status(201).json({
         message: "Friend invitation sent successfully",
         data: {
+          request_id: newFriendInvitation._id,
           newFriendInvitation: newFriendInvitationObj.receiver,
         },
       });

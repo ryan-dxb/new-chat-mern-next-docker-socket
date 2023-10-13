@@ -22,14 +22,49 @@ export const friendApi = createApi({
           const { data } = await queryFulfilled;
 
           if (data) {
-            dispatch(setFriendRequestsSent(data));
+            dispatch(setFriendRequestsSent(data.data));
           }
         } catch (err) {
           dispatch(friendApi.util.invalidateTags(["Friend"]));
         }
       },
     }),
+
+    acceptFriendRequest: builder.mutation<FriendInviation, any>({
+      query: (request_id: string) => ({
+        url: "/friend/accept-invite",
+        method: "POST",
+        body: { request_id },
+        credentials: "include",
+      }),
+      invalidatesTags: ["Friend"],
+    }),
+
+    rejectFriendRequest: builder.mutation<FriendInviation, any>({
+      query: (request_id: string) => ({
+        url: "/friend/reject-invite",
+        method: "POST",
+        body: { request_id },
+        credentials: "include",
+      }),
+      invalidatesTags: ["Friend"],
+    }),
+
+    cancelFriendRequest: builder.mutation<FriendInviation, any>({
+      query: (request_id: string) => ({
+        url: "/friend/cancel-invite",
+        method: "POST",
+        body: { request_id },
+        credentials: "include",
+      }),
+      invalidatesTags: ["Friend"],
+    }),
   }),
 });
 
-export const { useSendFriendRequestMutation } = friendApi;
+export const {
+  useSendFriendRequestMutation,
+  useAcceptFriendRequestMutation,
+  useRejectFriendRequestMutation,
+  useCancelFriendRequestMutation,
+} = friendApi;

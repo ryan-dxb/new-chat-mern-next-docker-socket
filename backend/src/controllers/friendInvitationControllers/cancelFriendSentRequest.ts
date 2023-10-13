@@ -10,12 +10,23 @@ import FriendInvitationModel from "@/models/friendInvitationModel";
 const cancelFriendSentRequestController: RequestHandler = asyncHandler(
   async (req: CancelInviteRequest, res: Response, next: NextFunction) => {
     try {
-      const { request_id, receiver_email } = req.body;
+      const { request_id } = req.body;
       const { _id, email } = req.user;
 
       if (!request_id) {
         return sendError(
           createHttpError.BadRequest("Friend Request ID is required")
+        );
+      }
+
+      // Find request in database
+      const requestFound = await FriendInvitationModel.findById(request_id);
+
+      if (!requestFound) {
+        return sendError(
+          createHttpError.NotFound(
+            "Friend request not found or already canceled"
+          )
         );
       }
 
@@ -46,7 +57,9 @@ const cancelFriendSentRequestController: RequestHandler = asyncHandler(
         );
 
       // Get the receiver from database
-      const receiverFound: UserDocument = await findUserByEmail(receiver_email);
+      const receiverFound: UserDocument = await findUserById(
+        requestFound.receiver.toString()
+      );
 
       if (!receiverFound) {
         return sendError(

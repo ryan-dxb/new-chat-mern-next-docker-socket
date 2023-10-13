@@ -44,6 +44,7 @@ const getAllFriendRequestsController: RequestHandler = asyncHandler(
       // Only return the necessary fields
       const friendRequestsSent = userFound.pendingFriendSentRequests.map(
         (friend: {
+          _id: string;
           receiver: {
             email: string;
             username: string;
@@ -52,10 +53,17 @@ const getAllFriendRequestsController: RequestHandler = asyncHandler(
             firstName: string;
             lastName: string;
           };
-        }) => friend.receiver
+        }) => {
+          return {
+            request_id: friend._id,
+            receiver: friend.receiver,
+          };
+        }
       );
+
       const friendRequestsReceived = userFound.pendingFriendInvitations.map(
         (friend: {
+          _id: string;
           sender: {
             email: string;
             username: string;
@@ -64,7 +72,12 @@ const getAllFriendRequestsController: RequestHandler = asyncHandler(
             firstName: string;
             lastName: string;
           };
-        }) => friend.sender
+        }) => {
+          return {
+            request_id: friend._id,
+            sender: friend.sender,
+          };
+        }
       );
 
       // Get the friend requests sent

@@ -1,8 +1,10 @@
+"use client";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { IUser } from "@/store/types/user";
 import { Check, Trash2, User, X } from "lucide-react";
 import { NextPage } from "next";
+import RequestActionButton from "./RequestActionButton";
 
 interface RequestListItemProps {
   request: IUser;
@@ -13,6 +15,8 @@ const RequestListItem: NextPage<RequestListItemProps> = ({
   request,
   requestType,
 }) => {
+  console.log("request", request);
+
   return (
     <div key={request.id} className="flex items-center justify-between mr-4">
       <div className="flex flex-row items-center space-x-2">
@@ -36,25 +40,28 @@ const RequestListItem: NextPage<RequestListItemProps> = ({
       <div className="flex flex-row space-x-2">
         {requestType === "received" && (
           <>
-            <Button variant="outline" className="w-8 h-8 rounded-full">
-              <span>
-                <Check className="w-4 h-4" />
-              </span>
-            </Button>
+            <RequestActionButton
+              variant="outline"
+              icon={<Check className="w-4 h-4" />}
+              action="accept"
+              request_id={request.request_id!}
+            />
 
-            <Button variant="destructive" className="w-8 h-8 rounded-full">
-              <span>
-                <X className="w-4 h-4" />
-              </span>
-            </Button>
+            <RequestActionButton
+              variant="destructive"
+              icon={<X className="w-4 h-4" />}
+              action="reject"
+              request_id={request.request_id!}
+            />
           </>
         )}
         {requestType === "sent" && (
-          <Button variant="destructive" className="w-8 h-8 rounded-full">
-            <span>
-              <Trash2 className="w-4 h-4" />
-            </span>
-          </Button>
+          <RequestActionButton
+            variant="destructive"
+            icon={<Trash2 className="w-4 h-4" />}
+            action="cancel"
+            request_id={request.request_id!}
+          />
         )}
       </div>
     </div>
