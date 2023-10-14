@@ -4,8 +4,8 @@ import { NextPage } from "next";
 import { useAppSelector } from "@/store/hooks";
 import { selectOpenTab } from "@/store/features/sidebar/sidebarSlice";
 import Chats from "./Chats";
-import Groups from "./Groups";
 import Friends from "./Friends";
+import Requests from "./Requests";
 
 interface SidebarProps {}
 
@@ -17,7 +17,7 @@ const Sidebar: NextPage<SidebarProps> = () => {
       case "Chats":
         return <Chats />;
       case "Requests":
-        return <Groups />;
+        return <Requests />;
       case "Friends":
         return <Friends />;
 

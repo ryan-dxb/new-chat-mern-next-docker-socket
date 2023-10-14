@@ -1,6 +1,5 @@
 import UserModel, { Roles, UserDocument } from "@/models/userModel";
 import sendError from "@/utils/sendError";
-import { DEFAULT_AVATAR } from "@/utils/variables";
 import createHttpError from "http-errors";
 
 type UserData = {
@@ -12,10 +11,10 @@ type UserData = {
   avatar?: { url: string; publicId: string };
 };
 
+//////////////// Create New User //////////////
 export const createNewUser = async (userData: UserData) => {
-  const { email, password, username, firstName, lastName, avatar } = userData;
+  const { email, password, username, firstName, lastName } = userData;
 
-  //////////////// Create New User //////////////
   const user: UserDocument = await UserModel.create({
     email: email.toLowerCase(),
     username,
@@ -23,10 +22,9 @@ export const createNewUser = async (userData: UserData) => {
     firstName,
     lastName,
     isAccountActive: true,
-    avatar: avatar ? avatar : DEFAULT_AVATAR,
   });
 
-  return user;
+  return user as UserDocument;
 };
 
 type Credentials = {
@@ -38,10 +36,10 @@ type Credentials = {
 export const findUserByEmail = async (email: string) => {
   const user = await UserModel.findOne({ email: email.toLowerCase() });
 
-  return user;
+  return user as UserDocument;
 };
 
-//////////////// Find user by email //////////////
+//////////////// Find user by Refresh Token //////////////
 export const findUserByRefreshToken = async (
   id: string,
   refreshToken: string
@@ -51,7 +49,7 @@ export const findUserByRefreshToken = async (
     refreshTokens: { $in: [refreshToken] },
   });
 
-  return user;
+  return user as UserDocument;
 };
 
 //////////////// Find User by Id //////////////
@@ -62,7 +60,7 @@ export const findUserById = async (id: string) => {
     sendError(createHttpError.Unauthorized("User not found"));
   }
 
-  return user;
+  return user as UserDocument;
 };
 
 //////////////// Check User Credentials //////////////
@@ -70,7 +68,7 @@ export const checkUserCredentials = async ({
   email,
   password,
 }: Credentials) => {
-  const user: UserDocument = await findUserByEmail(email);
+  const user = await findUserByEmail(email);
 
   if (!user) {
     sendError(createHttpError.NotFound("User not found"));
@@ -78,8 +76,6 @@ export const checkUserCredentials = async ({
 
   // Check if password matches
   const comparePassword = await user.comparePassword(password);
-
-  console.log("comparePassword", comparePassword);
 
   if (!comparePassword) {
     sendError(createHttpError.BadRequest("Invalid credentials"));

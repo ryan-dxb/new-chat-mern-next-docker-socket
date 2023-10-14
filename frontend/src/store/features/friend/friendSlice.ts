@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { IUser } from "../../types/user";
+import { UserModel } from "../../types/user";
 import { FriendModel, FriendRequestType } from "@/store/types/friend";
 
 interface FriendState {
@@ -9,7 +9,7 @@ interface FriendState {
 
   friendRequestsReceived: FriendRequestType[];
 
-  onlineFriends: IUser[];
+  onlineFriends: UserModel[];
 }
 
 const initialState: FriendState = {
@@ -32,8 +32,6 @@ export const friendSlice = createSlice({
         payload: FriendRequestType;
       }
     ) => {
-      console.log("action.payload", action.payload);
-
       const { request_id, userDetails } = action.payload;
 
       state.friendRequestsSent = [

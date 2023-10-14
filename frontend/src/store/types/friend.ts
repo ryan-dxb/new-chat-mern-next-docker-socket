@@ -1,4 +1,4 @@
-import { IUser } from "./user";
+import { UserModel } from "./user";
 
 export interface FriendInviation {
   message: string;
@@ -7,21 +7,15 @@ export interface FriendInviation {
 
 export interface FriendRequestType {
   request_id: string;
-  userDetails: FriendModel;
+  userDetails: UserModel;
 }
 
 export interface AllFriendsResponse {
   message: string;
-  data: FriendModel[];
+  data: UserModel[];
 }
 
 export interface FriendModel {
-  id?: string;
-  friend_id?: string;
-  email: string;
-  username: string;
-  status: string;
-  avatar: string;
-  firstName: string;
-  lastName: string;
+  friend_id: string;
+  userDetails: UserModel;
 }

@@ -16,14 +16,9 @@ const refreshTokenController = asyncHandler(
     try {
       const refreshTokenFromCookies = req.cookies.refreshToken;
 
-      console.log(
-        "refreshTokenFromCookies in REfreshToken COntroller",
-        refreshTokenFromCookies
-      );
-
       if (!refreshTokenFromCookies) {
         return sendError(
-          createHttpError.Unauthorized("No refresh token found, please login")
+          createHttpError.BadRequest("No refresh token found, please login")
         );
       }
 
@@ -32,26 +27,20 @@ const refreshTokenController = asyncHandler(
 
       if (!decodedUser) {
         return sendError(
-          createHttpError.Unauthorized(
-            "Something went wrong. Please login again"
-          )
+          createHttpError.Forbidden("Something went wrong. Please login again")
         );
       }
 
       // Reuse Detection
       const refreshTokenIsReused = await refreshTokenReuseDetection(
-        decodedUser as DecodedToken,
+        decodedUser,
         refreshTokenFromCookies,
         res
       );
 
-      console.log("refreshTokenIsReused", refreshTokenIsReused);
-
       if (refreshTokenIsReused) {
         return sendError(
-          createHttpError.Unauthorized(
-            "Something went wrong. Please login again"
-          )
+          createHttpError.Conflict("Something went wrong. Please login again")
         );
       }
 
@@ -70,9 +59,7 @@ const refreshTokenController = asyncHandler(
 
       if (!updatedRefreshToken) {
         return sendError(
-          createHttpError.Unauthorized(
-            "Something went wrong. Please login again"
-          )
+          createHttpError.Conflict("Something went wrong. Please login again")
         );
       }
 
@@ -88,13 +75,12 @@ const refreshTokenController = asyncHandler(
       res.status(200).json({
         message: "Refresh token generated successfully",
         data: {
-          id: decodedUser!.id,
+          id: decodedUser.id,
           accessToken: newAccessToken,
         },
       });
     } catch (error) {
-      console.log("error", error);
-
+      console.log(error);
       await refreshTokenErrorHandler(error, req, res, next);
     }
   }

@@ -3,7 +3,6 @@ import { RequestHandler, Response, NextFunction, Request } from "express";
 import { findUserById } from "@/services/auth.service";
 import sendError from "@/utils/sendError";
 import createHttpError from "http-errors";
-import { UserDocument } from "@/models/userModel";
 import EmailVerificationTokenModel from "@/models/emailVerificationTokenModel";
 
 const verifyEmailController: RequestHandler = asyncHandler(
@@ -12,11 +11,10 @@ const verifyEmailController: RequestHandler = asyncHandler(
       const { id, token } = req.params;
 
       // Check if user with provided id exists
-
-      const user: UserDocument = await findUserById(id);
+      const user = await findUserById(id);
 
       if (!user) {
-        return sendError(createHttpError.BadRequest("User not found"));
+        return sendError(createHttpError.NotFound("User not found"));
       }
 
       // Check if user is already verified
@@ -41,10 +39,6 @@ const verifyEmailController: RequestHandler = asyncHandler(
       }
 
       // Check if token is expired
-
-      console.log("tokenExists.expiresAt", tokenExists.expiresAt);
-      console.log("new Date()", new Date());
-
       if (tokenExists.expiresAt < new Date()) {
         return sendError(createHttpError.BadRequest("Token expired"));
       }

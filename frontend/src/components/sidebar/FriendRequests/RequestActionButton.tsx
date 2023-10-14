@@ -48,7 +48,6 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
       if (res) {
         dispatch(removeFriendRequestSent(request_id));
       }
-      console.log(res);
     } catch (err) {
       console.log(err);
     }
@@ -62,17 +61,11 @@ const RequestActionButton: NextPage<RequestActionButtonProps> = ({
         dispatch(
           setFriend({
             friend_id: request.userDetails.id,
-            firstName: request.userDetails.firstName,
-            lastName: request.userDetails.lastName,
-            avatar: request.userDetails.avatar,
-            username: request.userDetails.username,
-            email: request.userDetails.email,
-            status: request.userDetails.status,
+            userDetails: { ...request.userDetails },
           })
         );
         dispatch(removeFriendRequestReceived(request_id));
       }
-      console.log(res);
     } catch (err) {
       console.log(err);
     }

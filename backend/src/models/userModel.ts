@@ -96,12 +96,7 @@ UserSchema.methods.comparePassword = async function (
 ) {
   const user = this as UserDocument;
 
-  console.log("user", user);
-
-  console.log("candidatePassword", candidatePassword);
-  console.log("user.password", user.password);
   return bcrypt.compare(candidatePassword, user.password).catch((e) => {
-    console.log("e", e);
     return false;
   });
 };

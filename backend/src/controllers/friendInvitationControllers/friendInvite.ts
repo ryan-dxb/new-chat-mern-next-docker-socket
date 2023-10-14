@@ -12,8 +12,7 @@ const friendInviteController: RequestHandler = asyncHandler(
   async (req: FriendInviteRequest, res: Response, next: NextFunction) => {
     try {
       const { receiver_email } = req.body;
-
-      const { _id, email } = req.user;
+      const user = req.user;
 
       if (!receiver_email) {
         return sendError(
@@ -21,15 +20,8 @@ const friendInviteController: RequestHandler = asyncHandler(
         );
       }
 
-      // Get User from database
-      const userFound: UserDocument = await findUserById(_id);
-
-      if (!userFound) {
-        return sendError(createHttpError.NotFound("User not found"));
-      }
-
       // Get the receiver from database
-      const receiverFound: UserDocument = await findUserByEmail(receiver_email);
+      const receiverFound = await findUserByEmail(receiver_email.toLowerCase());
 
       if (!receiverFound) {
         return sendError(
@@ -40,7 +32,7 @@ const friendInviteController: RequestHandler = asyncHandler(
       }
 
       // Check if the user is trying to send a friend request to himself
-      if (email === receiver_email) {
+      if (user.email.toLowerCase() === receiver_email.toLowerCase()) {
         return sendError(
           createHttpError.BadRequest(
             "You cannot send a friend request to yourself"
@@ -49,7 +41,7 @@ const friendInviteController: RequestHandler = asyncHandler(
       }
 
       // Check if the user is trying to send a friend request to someone who is already his friend
-      const userAlreadyFriend = userFound.friends.find(
+      const userAlreadyFriend = user.friends.find(
         (friendId) => friendId.toString() === receiverFound._id.toString()
       );
 
@@ -66,12 +58,12 @@ const friendInviteController: RequestHandler = asyncHandler(
         await FriendInvitationModel.findOne({
           $or: [
             {
-              sender: userFound._id,
+              sender: user._id,
               receiver: receiverFound._id,
             },
             {
               sender: receiverFound._id,
-              receiver: userFound._id,
+              receiver: user._id,
             },
           ],
         });
@@ -79,24 +71,24 @@ const friendInviteController: RequestHandler = asyncHandler(
       if (invitationAlreadySentOrRecieved) {
         return sendError(
           createHttpError.BadRequest(
-            "You already sent a friend request to this user or he already sent you one"
+            "You already sent a friend request to this user or receiver already sent you one"
           )
         );
       }
 
       // Create the friend invitation
       let newFriendInvitation = await FriendInvitationModel.create({
-        sender: userFound._id,
+        sender: user._id,
         receiver: receiverFound._id,
       });
 
       // Add the friend invitation to the sender's pendingFriendSentRequests
       // and to the receiver's pendingFriendInvitations
 
-      userFound.pendingFriendSentRequests.push(newFriendInvitation._id);
+      user.pendingFriendSentRequests.push(newFriendInvitation._id);
       receiverFound.pendingFriendInvitations.push(newFriendInvitation._id);
 
-      await userFound.save();
+      await user.save();
       await receiverFound.save();
 
       // Send Socket.io notification to the receiver
@@ -112,7 +104,6 @@ const friendInviteController: RequestHandler = asyncHandler(
           select: "email username status avatar firstName lastName",
         }
       );
-      console.log("newFriendInvitation", newFriendInvitationObj.receiver);
 
       // Create a new invitation object without password
 

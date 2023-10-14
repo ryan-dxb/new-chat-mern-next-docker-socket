@@ -7,7 +7,7 @@ import {
 } from "@/utils/variables";
 
 import logger from "@/config/logger.config";
-import UserModel from "@/models/userModel";
+import UserModel, { UserDocument } from "@/models/userModel";
 
 //////////////// Generate Access And Refresh Tokens //////////////
 type TokenPayload = {
@@ -46,9 +46,15 @@ export const generateTokens = async ({ id, email }: TokenPayload) => {
 
 //// NEW ////
 export const removeRefreshTokensFromUser = async (id: string) => {
-  const user = await UserModel.findByIdAndUpdate(id, {
-    refreshTokens: [],
-  });
+  const user = await UserModel.findByIdAndUpdate(
+    id,
+    {
+      refreshTokens: [],
+    },
+    {
+      new: true,
+    }
+  );
 
-  return user;
+  return user as UserDocument;
 };

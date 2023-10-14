@@ -10,7 +10,7 @@ import { createUserObjWithoutPassword } from "@/services/user.service";
 const loginController: RequestHandler = asyncHandler(
   async (req: LoginUser, res: Response, next: NextFunction) => {
     try {
-      const refreshTokenFromCookies = req.cookies.refreshToken;
+      const refreshTokenFromCookies: string = req.cookies.refreshToken;
 
       const { email, password } = req.body;
 
@@ -22,14 +22,10 @@ const loginController: RequestHandler = asyncHandler(
 
       const user = await checkUserCredentials({ email, password });
 
-      if (!user) {
-        return sendError(createHttpError.Unauthorized("Invalid credentials"));
-      }
-
       // Check if user is verified
       if (!user.isEmailVerified) {
         return sendError(
-          createHttpError.Unauthorized(
+          createHttpError.BadRequest(
             "Please verify your email before logging in"
           )
         );
@@ -74,7 +70,6 @@ const loginController: RequestHandler = asyncHandler(
       });
 
       // Remove password from user object
-
       const userObj = createUserObjWithoutPassword(user);
 
       // Send new access token to client

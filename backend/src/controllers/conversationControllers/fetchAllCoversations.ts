@@ -5,18 +5,18 @@ import UserModel from "@/models/userModel";
 
 const fetchAllConversationsController: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user._id;
+    const user = req.user;
 
     // Fetch all conversations of the user
     let conversations = await ConversationModel.find({
       users: {
-        $in: [userId],
+        $in: [user._id],
       },
     })
-      .populate("users", "firstName lastName username avatar email id status")
+      .populate("users", "firstName lastName username avatar email  status")
       .populate(
         "groupAdmin",
-        "firstName lastName username avatar email id status"
+        "firstName lastName username avatar email  status"
       )
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
@@ -24,13 +24,22 @@ const fetchAllConversationsController: RequestHandler = asyncHandler(
     // Populate the latest message of each conversation
     conversations = await UserModel.populate(conversations, {
       path: "latestMessage.sender",
-      select: "firstName lastName username avatar email id status",
+      select: "firstName lastName username avatar email  status",
     });
 
     const conversationObject = conversations.map((conversation) => {
       return {
-        id: conversation._id,
-        ...conversation.toObject(),
+        conversation_id: conversation._id,
+        name: conversation.name,
+        isGroup: conversation.isGroup,
+        groupAdmin: conversation.groupAdmin,
+        users: conversation.users,
+        latestMessage: {
+          message_id: conversation.latestMessage._id,
+          message: conversation.latestMessage.message,
+          sender: conversation.latestMessage.sender,
+          files: conversation.latestMessage.files,
+        },
       };
     });
 

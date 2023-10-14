@@ -32,7 +32,7 @@ const FriendsList: NextPage<FriendsListProps> = () => {
         <div className="flex flex-col flex-1 space-y-1">
           {friends && friends.length > 0 ? (
             friends.map((friend) => (
-              <FriendListItem key={friend.id} friend={friend} />
+              <FriendListItem key={friend.friend_id} friend={friend} />
             ))
           ) : (
             <div className="flex flex-col items-center justify-center flex-1 p-2 space-y-2">

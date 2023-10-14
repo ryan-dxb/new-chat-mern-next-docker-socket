@@ -6,7 +6,7 @@ export interface ConversationInput {
   name?: string;
   groupPicture?: string;
   isGroup: boolean;
-  latestMessage?: string;
+  latestMessage?: mongoose.Schema.Types.ObjectId;
   groupAdmin?: mongoose.Schema.Types.ObjectId;
   users: mongoose.Schema.Types.ObjectId[];
 }
@@ -23,7 +23,7 @@ const ConversationSchema = new mongoose.Schema<ConversationDocument>(
     name: { type: String, trim: true },
     groupPicture: { type: String },
     isGroup: { type: Boolean, default: false },
-    latestMessage: { type: String },
+    latestMessage: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
     groupAdmin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

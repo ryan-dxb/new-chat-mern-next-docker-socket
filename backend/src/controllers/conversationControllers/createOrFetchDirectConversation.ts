@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { Response, NextFunction, RequestHandler } from "express";
+import { Response, NextFunction, RequestHandler, Request } from "express";
 import ConversationModel from "@/models/conversationModel";
 import UserModel, { UserDocument } from "@/models/userModel";
 import sendError from "@/utils/sendError";
@@ -8,19 +8,16 @@ import { findUserById } from "@/services/auth.service";
 import { log } from "console";
 
 const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { friend_id } = req.body;
-      const userId = req.user._id;
-
-      console.log("friend_id", friend_id);
-      log("userId", userId);
+      const user = req.user;
 
       if (!friend_id) {
-        return sendError(createHttpError.BadRequest("friend_id is required"));
+        return sendError(createHttpError.BadRequest("Friend ID is required"));
       }
 
-      if (friend_id === userId.toString()) {
+      if (friend_id === user._id.toString()) {
         return sendError(
           createHttpError.BadRequest("You cannot message yourself")
         );
@@ -37,18 +34,8 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
         );
       }
 
-      const userFound: UserDocument = await findUserById(userId.toString());
-
-      if (!userFound) {
-        return sendError(
-          createHttpError.NotFound(
-            "User you are trying to message does not exist"
-          )
-        );
-      }
-
       // Check if use has friend_id in their friends list
-      const isFriend = userFound.friends.includes(friend_id);
+      const isFriend = user.friends.includes(friend_id);
 
       if (!isFriend) {
         return sendError(
@@ -63,11 +50,11 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
       let isConversationExists = await ConversationModel.find({
         isGroup: false,
         $and: [
-          { users: { $elemMatch: { $eq: userId } } },
+          { users: { $elemMatch: { $eq: user._id } } },
           { users: { $elemMatch: { $eq: friend_id } } },
         ],
       })
-        .populate("users", "-password, -refreshToken")
+        .populate("users", "name email username firstName lastName avatar")
         .populate("latestMessage");
 
       if (isConversationExists.length > 0) {
@@ -76,8 +63,10 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
 
         isConversationExists = await UserModel.populate(isConversationExists, {
           path: "latestMessage.sender",
-          select: "-password -refreshToken",
+          select: "name email username firstName lastName avatar",
         });
+
+        console.log(isConversationExists[0]);
 
         res.status(200).json({
           message: "Conversation Found",
@@ -88,7 +77,7 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
         // Create a new conversation
         const newConversation = await ConversationModel.create({
           isGroup: false,
-          users: [userId, friend_id],
+          users: [user._id, friend_id],
         });
 
         // Populate the conversation with the users
@@ -96,7 +85,7 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
           newConversation,
           {
             path: "users",
-            select: "-password -refreshToken",
+            select: "name email username firstName lastName avatar",
           }
         );
 

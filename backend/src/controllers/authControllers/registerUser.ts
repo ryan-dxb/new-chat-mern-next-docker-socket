@@ -21,7 +21,7 @@ const registerController: RequestHandler = asyncHandler(
       }
 
       // Check if user with same email exists
-      const userExists = await findUserByEmail(email);
+      const userExists = await findUserByEmail(email.toLowerCase());
 
       if (userExists) {
         sendError(
@@ -49,9 +49,6 @@ const registerController: RequestHandler = asyncHandler(
       res.status(201).json({
         message:
           "Registration successful. Please check your email to verify your account",
-        data: {
-          user: newUser,
-        },
       });
     } catch (error) {
       next(error);

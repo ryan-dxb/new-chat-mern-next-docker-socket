@@ -16,8 +16,6 @@ const RequestListItem: NextPage<RequestListItemProps> = ({
   request,
   requestType,
 }) => {
-  console.log("request", request);
-
   return (
     <div
       key={request.request_id}

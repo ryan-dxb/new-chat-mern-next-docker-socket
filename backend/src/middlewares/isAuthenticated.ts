@@ -1,12 +1,13 @@
 import UserModel from "@/models/userModel";
+import { findUserById } from "@/services/auth.service";
 import sendError from "@/utils/sendError";
 import { verifyAccessToken } from "@/utils/token.utils";
-import { Request, RequestHandler, Response } from "express";
+import { Request, RequestHandler, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import createHttpError from "http-errors";
 
 const isAuthenticated: RequestHandler = asyncHandler(
-  async (req: Request, res: Response, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     let token: string = "";
 
     const authHeader = req.headers.authorization;
@@ -22,16 +23,11 @@ const isAuthenticated: RequestHandler = asyncHandler(
     try {
       const decoded = await verifyAccessToken(token);
 
-      console.log("decoded", decoded);
-
       if (!decoded) {
         return sendError(createHttpError.Unauthorized("Invalid token"));
       }
 
-      const user = await UserModel.findById(decoded?.id, {
-        password: 0,
-        refreshTokens: 0,
-      });
+      const user = await findUserById(decoded.id);
 
       if (!user) {
         return sendError(createHttpError.Unauthorized("Invalid token"));
@@ -39,12 +35,8 @@ const isAuthenticated: RequestHandler = asyncHandler(
 
       req.user = user;
 
-      console.log("req.user", req.user);
-
       next();
     } catch (error) {
-      console.log("error", error);
-
       next(error);
     }
   }

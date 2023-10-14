@@ -17,15 +17,12 @@ export const verifyRefreshToken = async (refreshToken: string) => {
   try {
     const decoded = await jwt.verify(refreshToken, REFRESH_JWT_SECRET!);
 
-    console.log("decoded", decoded);
-    console.log("Date.now()", Date.now());
-
-    console.log("Exp", (decoded as DecodedToken).exp * 1000 >= Date.now());
+    if (!decoded) {
+      return null;
+    }
 
     return decoded as DecodedToken;
   } catch (error) {
-    console.log("error", error);
-
     return null;
   }
 };
@@ -33,6 +30,10 @@ export const verifyRefreshToken = async (refreshToken: string) => {
 export const decodeUserWithoutVerifying = async (refreshToken: string) => {
   try {
     const decoded = await jwt.decode(refreshToken);
+
+    if (!decoded) {
+      return null;
+    }
 
     return decoded as DecodedToken;
   } catch (error) {
@@ -110,29 +111,15 @@ export const refreshTokenErrorHandler = async (
   try {
     const refreshTokenFromCookies = req.cookies.refreshToken;
 
-    console.log("error", error);
-
-    console.log(
-      "refreshTokenFromCookies in Error Handler",
-      refreshTokenFromCookies
-    );
-
-    if (!refreshTokenFromCookies) {
-      sendError(createHttpError.Unauthorized("No refresh token found"));
-    }
+    console.log("Triggered", error);
 
     // Remove Refresh Token from Database and Cookies
-
     const decodedUser = await decodeUserWithoutVerifying(
       refreshTokenFromCookies
     );
 
-    console.log("decodedUser", decodedUser);
-
-    let updatedUser: any;
-
     if (decodedUser && decodedUser.id) {
-      updatedUser = await removeRefreshTokensFromUser(decodedUser.id);
+      await removeRefreshTokensFromUser(decodedUser.id);
     }
 
     res.clearCookie("refreshToken", {
@@ -142,20 +129,20 @@ export const refreshTokenErrorHandler = async (
     });
 
     if (error === "TokenExpiredError") {
-      sendError(
-        createHttpError.Unauthorized("Token expired, please login again")
+      return sendError(
+        createHttpError.BadRequest("Token expired, please login again")
       );
     }
 
     if (error.name === "JsonWebTokenError") {
-      sendError(
-        createHttpError.Unauthorized("Invalid token, please login again")
+      return sendError(
+        createHttpError.BadRequest("Invalid token, please login again")
       );
     }
 
     if (error.name === "NotBeforeError") {
-      sendError(
-        createHttpError.Unauthorized("Token not active, please login again")
+      return sendError(
+        createHttpError.BadRequest("Token not active, please login again")
       );
     }
 
