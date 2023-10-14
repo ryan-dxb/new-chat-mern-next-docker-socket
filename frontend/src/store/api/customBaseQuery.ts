@@ -8,6 +8,9 @@ import { Mutex } from "async-mutex";
 // import { logout } from "../auth/authSlice";
 import { RootState, store } from "../store";
 import { logout, setToken } from "../features/user/userSlice";
+import { getCookie } from "cookies-next";
+import { getSession } from "@/lib/session";
+import { getServerSession } from "@/lib/getServerSession";
 
 const baseUrl = `/api/v1`;
 
@@ -23,7 +26,6 @@ const baseQuery = fetchBaseQuery({
   },
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).user.token;
-
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
@@ -50,7 +52,7 @@ const customFetchBase: BaseQueryFn<
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result.error?.status === 401 || result.error?.status === 403) {
+  if (result.error?.status === 401) {
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
 

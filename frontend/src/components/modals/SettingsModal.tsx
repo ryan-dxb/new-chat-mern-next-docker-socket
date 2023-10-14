@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputWithIcon from "../common/InputWithIcon";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import BorderedAvatar from "../common/BorderedAvatar";
@@ -45,15 +45,40 @@ interface SettingsModalProps {
 }
 
 const UpdateProfileFormSchema = z.object({
-  firstName: z.string().min(2, "Please enter a valid first name"),
-  lastName: z.string().min(2, "Please enter a valid last name"),
+  firstName: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        return val.length > 2;
+      },
+      {
+        message: "Please enter a valid first name",
+      }
+    ),
+  lastName: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        return val.length > 2;
+      },
+      {
+        message: "Please enter a valid first name",
+      }
+    ),
   username: z.string().min(2, "Please enter a valid username"),
   status: z.string().min(2, "What's on your mind?"),
   email: z.string().email("Please enter a valid email address"),
 });
 
 const SettingsModal: NextPage<SettingsModalProps> = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const user = useAppSelector(selectUser);
+
   const dispatch = useAppDispatch();
 
   const [updateUser, { isSuccess, isLoading }] = useUpdateUserMutation();
@@ -79,11 +104,11 @@ const SettingsModal: NextPage<SettingsModalProps> = ({ children }) => {
     mode: "onBlur",
     reValidateMode: "onBlur",
     defaultValues: {
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      email: user?.email,
-      username: user?.username,
-      status: user?.status,
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      username: user?.username || "",
+      status: user?.status || "",
     },
   });
 
@@ -103,9 +128,6 @@ const SettingsModal: NextPage<SettingsModalProps> = ({ children }) => {
     }
 
     if (isSuccess) {
-      console.log("isSuccess", isSuccess);
-
-      dispatch(setUser(response.data));
     }
     try {
     } catch (error) {
@@ -114,7 +136,17 @@ const SettingsModal: NextPage<SettingsModalProps> = ({ children }) => {
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        form.setValue("firstName", user?.firstName);
+        form.setValue("lastName", user?.lastName);
+        form.setValue("email", user?.email);
+        form.setValue("username", user?.username);
+        form.setValue("status", user?.status);
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>

@@ -30,20 +30,17 @@ export const authApi = createApi({
       }),
 
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        console.log("onQueryStarted", args, queryFulfilled);
-
         try {
-          const { data } = await queryFulfilled;
+          const { data, message } = (await queryFulfilled).data;
 
-          console.log("onQueryStarted data", data);
-          if (data.data.user) {
-            dispatch(setUser(data.data));
+          if (data.user) {
+            dispatch(setUser(data));
 
             const sessionObj = {
-              accessToken: data.data.accessToken,
+              accessToken: data.accessToken,
               user: {
-                id: data.data.user.id,
-                email: data.data.user.email,
+                id: data.user.id,
+                email: data.user.email,
               },
             };
 
@@ -216,36 +213,6 @@ export const authApi = createApi({
     //   },
     // }),
 
-    getUser: builder.query<IUser, any>({
-      // Use accessToken from authSlice
-      query: (accessToken) => ({
-        url: "user/profile",
-        method: "GET",
-        credentials: "include",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }),
-
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        console.log("onQueryStarted", args, queryFulfilled);
-
-        try {
-          const { data } = await queryFulfilled;
-
-          console.log("onQueryStarted data", data);
-        } catch (err) {
-          console.log("onQueryStarted error", err);
-        }
-      },
-
-      transformResponse: async (response: any) => {
-        console.log("transformResponse", response);
-
-        return response;
-      },
-    }),
-
     logoutUser: builder.mutation<VerifyResponse, any>({
       query: ({ token }) => ({
         url: "auth/logout",
@@ -279,7 +246,6 @@ export const authApi = createApi({
 export const {
   useLoginUserMutation,
   useRegisterUserMutation,
-  useGetUserQuery,
   useLogoutUserMutation,
   // useVerifyUserMutation,
   // useSendVerificationEmailMutation,

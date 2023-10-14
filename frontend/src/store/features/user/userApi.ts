@@ -1,5 +1,5 @@
 import customFetchBase from "@/store/api/customBaseQuery";
-import { FriendRequests } from "@/store/types/user";
+import { FriendRequests, GetUserResponse } from "@/store/types/user";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import {
   setAllFriends,
@@ -8,21 +8,13 @@ import {
   setFriendRequestsSent,
 } from "../friend/friendSlice";
 import { AllFriendsResponse } from "@/store/types/friend";
+import { setUser } from "./userSlice";
 
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: customFetchBase,
   tagTypes: ["User", "FriendRequests", "AllFriends"],
   endpoints: (builder) => ({
-    getUser: builder.query({
-      query: () => ({
-        url: "user",
-        method: "GET",
-        credentials: "include",
-      }),
-      providesTags: ["User", "AllFriends"],
-    }),
-
     getFriendRequests: builder.query<FriendRequests, any>({
       query: () => ({
         url: "user/friend-requests",
@@ -76,13 +68,23 @@ export const userApi = createApi({
         credentials: "include",
       }),
       invalidatesTags: ["User"],
+
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = (await queryFulfilled).data;
+
+          if (data) {
+            dispatch(setUser(data));
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      },
     }),
   }),
 });
 
 export const {
-  useGetUserQuery,
-  useLazyGetUserQuery,
   useUpdateUserMutation,
   useGetFriendRequestsQuery,
   useGetFriendsQuery,

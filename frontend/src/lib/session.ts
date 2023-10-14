@@ -15,9 +15,19 @@ export async function createSession(session: Session) {
   console.log("createSession", session);
 
   const token = await new jose.SignJWT(session)
-    .setExpirationTime("7d")
     .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("1h")
     .sign(secret);
 
-  setCookie("session-token", token, {});
+  setCookie("session-token", token, {
+    expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour
+  });
+}
+
+export async function getSession(token: string) {
+  console.log("getSession", token);
+
+  const { payload } = await jose.jwtVerify(token, secret);
+
+  return payload as Session;
 }

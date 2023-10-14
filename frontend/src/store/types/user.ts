@@ -20,3 +20,20 @@ export interface FriendRequests {
   friendRequestsSent: IUser[];
   friendRequestsReceived: IUser[];
 }
+
+export interface UserModel {
+  id: string;
+  email: string;
+  username: string;
+  status: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+}
+
+export interface GetUserResponse {
+  message: string;
+  data: {
+    user: UserModel;
+  };
+}

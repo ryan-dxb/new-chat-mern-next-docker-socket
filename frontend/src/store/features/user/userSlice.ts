@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { IUser } from "../../types/user";
+import { IUser, UserModel } from "../../types/user";
 
 interface UserState {
-  userDetails: IUser;
+  userDetails: UserModel;
   token: string;
 }
 
@@ -12,17 +12,10 @@ const initialState: UserState = {
     id: "",
     email: "",
     username: "",
+    status: "",
     firstName: "",
     lastName: "",
     avatar: "",
-    createdAt: "",
-    updatedAt: "",
-    friends: [],
-    status: "",
-    isEmailVerified: false,
-    isAccountActive: false,
-    pendingFriendInvitations: [],
-    pendingFriendSentRequests: [],
   },
   token: "",
 };

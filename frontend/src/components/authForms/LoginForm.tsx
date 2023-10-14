@@ -52,12 +52,6 @@ const LoginForm: NextPage<LoginFormProps> = () => {
           className: "bg-green-500",
         });
       }
-
-      if (isSuccess) {
-        setTimeout(() => {
-          router.push("/");
-        }, 2000);
-      }
     } catch (error: any) {
       console.log("error", error);
 
