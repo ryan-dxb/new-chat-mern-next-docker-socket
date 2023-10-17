@@ -7,11 +7,12 @@ import createHttpError from "http-errors";
 import MessageModel from "@/models/messageModel";
 import UserModel from "@/models/userModel";
 
-export const sendMessageController: RequestHandler = asyncHandler(
+export const sendMessageController = asyncHandler(
   async (req: SendMessagesRequest, res: Response, next: NextFunction) => {
     try {
       const user = req.user;
-      const { conversation_id, message } = req.body;
+      const { conversation_id } = req.params;
+      const { message } = req.body;
 
       // Check if conversation exists
       const conversation = await ConversationModel.findById(conversation_id);

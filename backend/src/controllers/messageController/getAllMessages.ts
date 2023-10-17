@@ -29,6 +29,7 @@ export const getAllMessagesController = asyncHandler(
           message: message.message,
           sender: message.sender,
           files: message.files,
+          createdAt: message.createdAt,
         };
       });
 

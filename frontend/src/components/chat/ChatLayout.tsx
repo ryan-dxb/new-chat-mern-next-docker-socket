@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import ChatHeader from "./ChatHeader";
 import ChatMessageBox from "./ChatMessageBox";
 import ChatInput from "./ChatInput";
+import { ConversationModel } from "@/store/types/conversation";
 
 interface ChatLayoutProps {}
 

@@ -4,7 +4,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.route("/").post(isAuthenticated, sendMessage);
+router.route("/:conversation_id").post(isAuthenticated, sendMessage);
 router.route("/:conversation_id").get(isAuthenticated, getAllMessages);
 
 export default router;

@@ -1,8 +1,10 @@
 import { Request } from "express";
 
 export interface SendMessagesRequest extends Request {
-  body: {
+  params: {
     conversation_id: string;
+  };
+  body: {
     message: string;
   };
 }

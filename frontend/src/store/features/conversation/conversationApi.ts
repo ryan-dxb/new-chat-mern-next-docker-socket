@@ -5,12 +5,16 @@ import {
   setNewConversation,
   setSelectedConversation,
 } from "./conversationSlice";
-import { FetchOrCreateConversationResponse } from "@/store/types/conversation";
+import {
+  FetchOrCreateConversationResponse,
+  GetMessagesResponse,
+} from "@/store/types/conversation";
+import { RootState } from "@/store/store";
 
 export const conversationApi = createApi({
   reducerPath: "conversationApi",
   baseQuery: customFetchBase,
-  tagTypes: ["Conversation"],
+  tagTypes: ["Conversation", "Message"],
   endpoints: (builder) => ({
     getOrCreateConversation: builder.mutation<
       FetchOrCreateConversationResponse,
@@ -39,23 +43,24 @@ export const conversationApi = createApi({
       },
     }),
 
-    getMessages: builder.query<any, any>({
+    getMessages: builder.query<GetMessagesResponse, any>({
       query: (conversation_id: string) => ({
-        url: `/conversation/${conversation_id}`,
+        url: `/message/${conversation_id}`,
         method: "GET",
         credentials: "include",
       }),
-      providesTags: ["Conversation"],
+
+      providesTags: ["Message"],
     }),
 
     sendMessage: builder.mutation<any, any>({
       query: ({ conversation_id, message }: any) => ({
-        url: `/conversation/${conversation_id}`,
+        url: `/message/${conversation_id}`,
         method: "POST",
         body: { message },
         credentials: "include",
       }),
-      invalidatesTags: ["Conversation"],
+      invalidatesTags: ["Message"],
     }),
 
     getAllConversations: builder.query<any, any>({

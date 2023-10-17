@@ -14,3 +14,10 @@ export interface FetchOrCreateConversationResponse {
     conversation: ConversationModel;
   };
 }
+
+export interface GetMessagesResponse {
+  message: string;
+  data: {
+    messages: MessageModel[];
+  };
+}
