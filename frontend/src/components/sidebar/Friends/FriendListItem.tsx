@@ -4,33 +4,28 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Trash2, User } from "lucide-react";
 import { FriendModel } from "@/store/types/friend";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setSelectedConversation } from "@/store/features/conversation/conversationSlice";
 import { useGetOrCreateConversationMutation } from "@/store/features/conversation/conversationApi";
+import { selectUser } from "@/store/features/user/userSlice";
 
 interface FriendListItemProps {
   friend: FriendModel;
 }
 
 const FriendListItem: NextPage<FriendListItemProps> = ({ friend }) => {
-  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
   const [getOrCreateConversation, { isLoading, isError }] =
     useGetOrCreateConversationMutation();
 
   const getOrCreateConversationHandler = async (friend_id: string) => {
-    console.log(friend_id);
-
-    const res = await getOrCreateConversation(friend_id);
-    if (res.data) {
-      // dispatch(setSelectedConversation(res.data.id));
-      console.log(res.data);
-    }
+    await getOrCreateConversation(friend_id);
   };
 
   return (
     <div
-      key={friend.id}
+      key={friend.friend_id}
       className="flex cursor-pointer group"
       onClick={() => getOrCreateConversationHandler(friend.friend_id!)}
     >
@@ -38,23 +33,36 @@ const FriendListItem: NextPage<FriendListItemProps> = ({ friend }) => {
         <div className="flex flex-row items-center flex-1 space-x-2 ">
           <Avatar className="w-10 h-10 ">
             <AvatarFallback className="text-xs bg-primary/5">
-              {friend && friend.firstName && friend.lastName ? (
-                <>{friend.firstName[0] + friend.lastName[0]}</>
-              ) : (
+              {friend &&
+              friend.userDetails.firstName &&
+              friend.userDetails.lastName ? (
                 <>
-                  <User className="w-4 h-4" />
+                  {friend.userDetails.firstName[0] +
+                    friend.userDetails.lastName[0]}
                 </>
+              ) : (
+                (
+                  <>
+                    {friend &&
+                      friend.userDetails?.username[0] +
+                        friend.userDetails?.username[1]}
+                  </>
+                ) ?? <User className="w-4 h-4" />
               )}
             </AvatarFallback>
           </Avatar>
           <div>
             <p className="text-sm font-semibold">
-              {friend && friend.firstName && friend.lastName
-                ? friend.firstName + " " + friend.lastName
-                : "Unknown"}
+              {friend &&
+              friend.userDetails.firstName &&
+              friend.userDetails.lastName
+                ? friend.userDetails.firstName +
+                  " " +
+                  friend.userDetails.lastName
+                : friend?.userDetails.username ?? "Unknown"}
             </p>
             <p className="text-xs font-semibold text-muted-foreground">
-              {friend.status ?? "Hey there! I'm using Messenger."}
+              {friend?.userDetails.status ?? "Hey there! I'm using Messenger."}
             </p>
           </div>
         </div>

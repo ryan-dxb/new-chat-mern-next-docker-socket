@@ -1,18 +1,42 @@
 import customFetchBase from "@/store/api/customBaseQuery";
 import { createApi } from "@reduxjs/toolkit/query/react";
+import {
+  setConversations,
+  setNewConversation,
+  setSelectedConversation,
+} from "./conversationSlice";
+import { FetchOrCreateConversationResponse } from "@/store/types/conversation";
 
 export const conversationApi = createApi({
   reducerPath: "conversationApi",
   baseQuery: customFetchBase,
   tagTypes: ["Conversation"],
   endpoints: (builder) => ({
-    getOrCreateConversation: builder.mutation<any, any>({
+    getOrCreateConversation: builder.mutation<
+      FetchOrCreateConversationResponse,
+      any
+    >({
       query: (friend_id: string) => ({
         url: "/conversation/create-fetch-direct-conversation",
         method: "POST",
         body: { friend_id },
         credentials: "include",
       }),
+
+      invalidatesTags: ["Conversation"],
+
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+
+          console.log(data.data);
+
+          if (data) {
+            await dispatch(setNewConversation(data.data.conversation));
+            await dispatch(setSelectedConversation(data.data.conversation));
+          }
+        } catch (error) {}
+      },
     }),
 
     getMessages: builder.query<any, any>({
@@ -42,33 +66,15 @@ export const conversationApi = createApi({
       }),
       providesTags: ["Conversation"],
 
-      // onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
-      //   try {
-      //     const result = await queryFulfilled;
-      //     const { data } = result;
-      //     const { conversations } = data;
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
 
-      //     const conversation_ids = conversations.map(
-      //       (conversation: any) => conversation._id
-      //     );
-
-      //     dispatch(
-      //       conversationApi.util.updateQueryData("getMessages", undefined, (
-      //         oldData: any
-      //       ) => {
-      //         if (oldData) {
-      //           const newMessages: any = {};
-      //           conversation_ids.forEach((conversation_id: string) => {
-      //             newMessages[conversation_id] = [];
-      //           });
-      //           return { ...oldData, ...newMessages };
-      //         }
-      //       })
-      //     );
-      //   } catch (error) {
-      //     console.log(error);
-      //   }
-      // }
+          if (data) {
+            dispatch(setConversations(data.data.conversations));
+          }
+        } catch (error) {}
+      },
     }),
   }),
 });

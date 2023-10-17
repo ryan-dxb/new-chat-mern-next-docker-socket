@@ -5,7 +5,6 @@ import UserModel, { UserDocument } from "@/models/userModel";
 import sendError from "@/utils/sendError";
 import createHttpError from "http-errors";
 import { findUserById } from "@/services/auth.service";
-import { log } from "console";
 
 const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -57,6 +56,8 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
         .populate("users", "name email username firstName lastName avatar")
         .populate("latestMessage");
 
+      console.log("isConversationExists", isConversationExists);
+
       if (isConversationExists.length > 0) {
         // Conversation already exists
         // Populate the conversation with the latest message
@@ -66,11 +67,28 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
           select: "name email username firstName lastName avatar",
         });
 
-        console.log(isConversationExists[0]);
+        console.log("isConversationExists", isConversationExists);
+
+        const populatedConversationObject = {
+          conversation_id: isConversationExists[0]._id,
+          name: isConversationExists[0].name,
+          isGroup: isConversationExists[0].isGroup,
+          groupAdmin: isConversationExists[0].groupAdmin,
+          users: isConversationExists[0].users,
+          latestMessage: {
+            message_id: isConversationExists[0].latestMessage?._id,
+            message: isConversationExists[0].latestMessage?.message,
+            sender: isConversationExists[0].latestMessage?.sender,
+            files: isConversationExists[0].latestMessage?.files,
+            createdAt: isConversationExists[0].latestMessage?.createdAt,
+          },
+        };
 
         res.status(200).json({
           message: "Conversation Found",
-          data: isConversationExists[0],
+          data: {
+            conversation: populatedConversationObject,
+          },
         });
       } else {
         // Conversation does not exist
@@ -89,9 +107,28 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
           }
         );
 
+        console.log("populatedConversation", populatedConversation);
+
+        const populatedConversationObject = {
+          conversation_id: populatedConversation._id,
+          name: populatedConversation.name,
+          isGroup: populatedConversation.isGroup,
+          groupAdmin: populatedConversation.groupAdmin,
+          users: populatedConversation.users,
+          latestMessage: {
+            message_id: populatedConversation.latestMessage?._id,
+            message: populatedConversation.latestMessage?.message,
+            sender: populatedConversation.latestMessage?.sender,
+            files: populatedConversation.latestMessage?.files,
+            createdAt: populatedConversation.latestMessage?.createdAt,
+          },
+        };
+
         res.status(201).json({
           message: "Conversation Created",
-          data: populatedConversation,
+          data: {
+            conversation: populatedConversationObject,
+          },
         });
       }
     } catch (error) {

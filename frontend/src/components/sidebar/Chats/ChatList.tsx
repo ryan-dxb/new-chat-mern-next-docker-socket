@@ -8,6 +8,7 @@ import { selectFriends } from "@/store/features/friend/friendSlice";
 import ChatListItem from "./ChatListItem";
 import { useGetAllConversationsQuery } from "@/store/features/conversation/conversationApi";
 import { selectConversations } from "@/store/features/conversation/conversationSlice";
+import { ConversationModel } from "@/store/types/conversation";
 
 interface ChatListProps {}
 
@@ -16,8 +17,7 @@ const ChatList: NextPage<ChatListProps> = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  // const conversatons = useAppSelector(selectConversations);
-  const conversations = data?.conversations;
+  const conversations = useAppSelector(selectConversations);
 
   return (
     <>
@@ -34,8 +34,11 @@ const ChatList: NextPage<ChatListProps> = () => {
       <ScrollArea className="flex flex-col flex-1  space-y-2 mt-2  h-[90%]">
         <div className="flex flex-col flex-1 space-y-3">
           {conversations && conversations.length > 0 ? (
-            conversations.map((conversation: any) => (
-              <ChatListItem key={conversation.id} conversation={conversation} />
+            conversations.map((conversation: ConversationModel) => (
+              <ChatListItem
+                key={conversation.conversation_id}
+                conversation={conversation}
+              />
             ))
           ) : (
             <div className="flex flex-col items-center justify-center flex-1 p-2 space-y-2">

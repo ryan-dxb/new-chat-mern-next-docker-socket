@@ -35,10 +35,11 @@ const fetchAllConversationsController: RequestHandler = asyncHandler(
         groupAdmin: conversation.groupAdmin,
         users: conversation.users,
         latestMessage: {
-          message_id: conversation.latestMessage._id,
-          message: conversation.latestMessage.message,
-          sender: conversation.latestMessage.sender,
-          files: conversation.latestMessage.files,
+          message_id: conversation.latestMessage?._id,
+          message: conversation.latestMessage?.message,
+          sender: conversation.latestMessage?.sender,
+          files: conversation.latestMessage?.files,
+          createdAt: conversation.latestMessage?.createdAt,
         },
       };
     });

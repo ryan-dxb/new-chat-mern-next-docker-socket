@@ -1,9 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
+import { ConversationModel } from "@/store/types/conversation";
+import { MessageModel } from "@/store/types/message";
 
-const initialState = {
+interface ConversationState {
+  conversations: ConversationModel[];
+  selectedConversation: ConversationModel;
+  messages: MessageModel[];
+}
+
+const initialState: ConversationState = {
   conversations: [],
-  selectedConversation: {},
+  selectedConversation: {
+    conversation_id: "",
+    isGroup: false,
+    users: [],
+    latestMessage: {
+      createdAt: "",
+      files: [],
+      message: "",
+      message_id: "",
+      sender: {
+        id: "",
+        avatar: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+        username: "",
+        status: "",
+      },
+    },
+  },
   messages: [],
 };
 
@@ -14,7 +41,20 @@ export const conversationSlice = createSlice({
     setConversations: (state, action) => {
       state.conversations = action.payload;
     },
+    setNewConversation: (state, action) => {
+      // First check if the conversation already exists
+      const isConversationExists = state.conversations.filter(
+        (conversation) =>
+          conversation.conversation_id === action.payload.conversation_id
+      );
+
+      if (isConversationExists.length === 0) {
+        state.conversations = [...state.conversations, action.payload];
+      }
+    },
     setSelectedConversation: (state, action) => {
+      console.log("action.payload", action.payload);
+
       state.selectedConversation = action.payload;
     },
     setMessages: (state, action) => {
@@ -31,6 +71,7 @@ export const {
   setSelectedConversation,
   setMessages,
   addMessage,
+  setNewConversation,
 } = conversationSlice.actions;
 
 export const selectConversations = (state: RootState) =>

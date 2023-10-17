@@ -1,8 +1,16 @@
+import { MessageModel } from "./message";
 import { UserModel } from "./user";
 
 export interface ConversationModel {
   conversation_id: string;
   isGroup: boolean;
   users: UserModel[];
-  // latestMessage: MessageModel;
+  latestMessage: MessageModel;
+}
+
+export interface FetchOrCreateConversationResponse {
+  message: string;
+  data: {
+    conversation: ConversationModel;
+  };
 }

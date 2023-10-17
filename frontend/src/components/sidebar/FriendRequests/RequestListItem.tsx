@@ -32,18 +32,26 @@ const RequestListItem: NextPage<RequestListItemProps> = ({
                   request.userDetails.lastName[0]}
               </>
             ) : (
-              <>
+              (request &&
+                request?.userDetails?.username[0] +
+                  request?.userDetails?.username[1]) ?? (
                 <User className="w-4 h-4" />
-              </>
+              )
             )}
           </AvatarFallback>
         </Avatar>
         <p className="text-sm font-semibold">
           {request &&
           request.userDetails.firstName &&
-          request.userDetails.lastName
-            ? request.userDetails.firstName + " " + request.userDetails.lastName
-            : "Unknown"}
+          request.userDetails.lastName ? (
+            <>
+              {request.userDetails.firstName +
+                " " +
+                request.userDetails.lastName}
+            </>
+          ) : (
+            (request && request?.userDetails?.username) ?? "Unknown"
+          )}
         </p>
       </div>
       <div className="flex flex-row space-x-2">
