@@ -25,6 +25,19 @@ export const sendMessageController = asyncHandler(
         );
       }
 
+      // Check if user is in the conversation
+      const isUserInConversation = conversation.users.includes(
+        user._id.toString()
+      );
+
+      if (!isUserInConversation) {
+        return sendError(
+          createHttpError.BadRequest(
+            "You are not in the conversation you are trying to message"
+          )
+        );
+      }
+
       // Create message
       let messageData = await MessageModel.create({
         conversation: conversation_id,

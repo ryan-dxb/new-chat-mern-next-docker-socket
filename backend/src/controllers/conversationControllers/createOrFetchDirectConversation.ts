@@ -56,8 +56,6 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
         .populate("users", "name email username firstName lastName avatar")
         .populate("latestMessage");
 
-      console.log("isConversationExists", isConversationExists);
-
       if (isConversationExists.length > 0) {
         // Conversation already exists
         // Populate the conversation with the latest message
@@ -66,8 +64,6 @@ const createOrFetchDirectConversationController: RequestHandler = asyncHandler(
           path: "latestMessage.sender",
           select: "name email username firstName lastName avatar",
         });
-
-        console.log("isConversationExists", isConversationExists);
 
         const populatedConversationObject = {
           conversation_id: isConversationExists[0]._id,
